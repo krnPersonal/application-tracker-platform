@@ -235,6 +235,31 @@ input {
     gap: 32px;
 }
 
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.page-kicker {
+    margin: 0 0 10px;
+    color: var(--primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.page-title {
+    margin: 0;
+    max-width: 14ch;
+    font-size: clamp(2rem, 4vw, 3.1rem);
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    color: #081126;
+}
+
 .page-subtitle {
     color: var(--muted);
     margin: 8px 0 0;
@@ -276,6 +301,75 @@ input {
 .btn-outline:hover {
     border-color: var(--primary);
     color: var(--primary);
+}
+
+.card {
+    border-radius: 28px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 255, 0.92));
+    box-shadow: var(--shadow-soft);
+    padding: 28px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.meta-label {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.meta-value {
+    margin: 0;
+    font-weight: 700;
+    color: #18304d;
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.form-success {
+    margin: 0;
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.profile-page {
+    gap: 20px;
+}
+
+.profile-section {
+    gap: 20px;
 }
 
 .landing-page {
@@ -519,7 +613,9 @@ input {
     .landing-hero,
     .landing-showcase-grid,
     .landing-feature-grid,
-    .landing-showcase-strip {
+    .landing-showcase-strip,
+    .summary-grid,
+    .form-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -533,7 +629,8 @@ input {
     .landing-visual,
     .landing-showcase-card,
     .landing-about-card,
-    .landing-feature-card {
+    .landing-feature-card,
+    .card {
         padding: 22px;
     }
 
@@ -545,6 +642,10 @@ input {
     .btn-outline {
         width: 100%;
         text-align: center;
+    }
+
+    .span-2 {
+        grid-column: span 1;
     }
 }
 

@@ -9,6 +9,8 @@ public record MeResponse(
         String middleName,
         String lastName,
         String fullName,
+        String phone,
+        String title,
         String role,
         LocalDateTime createdAt
 ) {

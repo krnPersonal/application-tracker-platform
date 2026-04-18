@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { apiFetch, clearToken, getToken, isUnauthorizedError } from "../api/Client.js";
 
 function Navbar() {
+    const location = useLocation();
     const navigate = useNavigate();
     const menuRef = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -47,7 +48,14 @@ function Navbar() {
 
         loadCurrentUser();
 
+        function handleAccountUpdated() {
+            loadCurrentUser();
+        }
+
+        window.addEventListener("account-updated", handleAccountUpdated);
+
         return () => {
+            window.removeEventListener("account-updated", handleAccountUpdated);
             ignore = true;
         };
     }, [token]);
@@ -64,6 +72,10 @@ function Navbar() {
             document.removeEventListener("mousedown", handleDocumentClick);
         };
     }, []);
+
+    useEffect(() => {
+        setMenuOpen(false);
+    }, [location.pathname]);
 
     function handleLogout() {
         clearToken();
@@ -107,6 +119,16 @@ function Navbar() {
 
                             {menuOpen && (
                                 <div className="nav-menu">
+                                    <button
+                                        type="button"
+                                        className="nav-menu-item"
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            navigate("/profile");
+                                        }}
+                                    >
+                                        Manage Account
+                                    </button>
                                     <button type="button" className="nav-menu-item" onClick={handleLogout}>
                                         Logout
                                     </button>
