@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../api/Client.js";
 
-const PIPELINE_STATUS_ORDER = ["APPLIED", "INTERVIEW", "OFFER", "REJECTED"];
+const PIPELINE_STATUS_ORDER = [
+    "APPLIED",
+    "INTERVIEW_SCHEDULED",
+    "INTERVIEWED",
+    "OFFER_RECEIVED",
+    "REJECTED",
+    "WITHDRAWN",
+];
 
 function getLastActivityTimestamp(application) {
     const created = new Date(application.createdAt || 0).getTime();
@@ -27,6 +34,23 @@ function formatDate(value) {
         day: "numeric",
         year: "numeric",
     });
+}
+
+function formatEnumLabel(value) {
+    return String(value || "APPLIED")
+        .split("_")
+        .map((part) => part.charAt(0) + part.slice(1).toLowerCase())
+        .join(" ");
+}
+
+function isFollowUpCandidate(status) {
+    return status !== "REJECTED" && status !== "WITHDRAWN" && status !== "OFFER_RECEIVED";
+}
+
+function getPriorityRank(priority) {
+    if (priority === "HIGH") return 0;
+    if (priority === "MEDIUM") return 1;
+    return 2;
 }
 
 function DashboardPage() {
@@ -67,9 +91,11 @@ function DashboardPage() {
     const metrics = useMemo(() => {
         const counts = {
             APPLIED: 0,
-            INTERVIEW: 0,
-            OFFER: 0,
+            INTERVIEW_SCHEDULED: 0,
+            INTERVIEWED: 0,
+            OFFER_RECEIVED: 0,
             REJECTED: 0,
+            WITHDRAWN: 0,
         };
 
         let activeCount = 0;
@@ -83,30 +109,31 @@ function DashboardPage() {
                 counts[status] += 1;
             }
 
-            if (status !== "REJECTED" && status !== "OFFER") {
+            if (isFollowUpCandidate(status)) {
                 activeCount += 1;
             }
 
             if (
-                daysSinceActivity !== null &&
-                daysSinceActivity >= 14 &&
-                status !== "REJECTED" &&
-                status !== "OFFER"
+                ((application.nextActionDate && new Date(application.nextActionDate).getTime() <= Date.now()) ||
+                    (daysSinceActivity !== null && daysSinceActivity >= 14)) &&
+                isFollowUpCandidate(status)
             ) {
                 staleCount += 1;
             }
         }
 
         const total = applications.length;
-        const responseRate = total > 0 ? Math.round((counts.INTERVIEW / total) * 100) : 0;
-        const offerRate = total > 0 ? Math.round((counts.OFFER / total) * 100) : 0;
+        const interviewCount = counts.INTERVIEW_SCHEDULED + counts.INTERVIEWED;
+        const interviewRate = total > 0 ? Math.round((interviewCount / total) * 100) : 0;
+        const offerRate = total > 0 ? Math.round((counts.OFFER_RECEIVED / total) * 100) : 0;
 
         return {
             total,
             activeCount,
             staleCount,
             counts,
-            responseRate,
+            interviewCount,
+            interviewRate,
             offerRate,
         };
     }, [applications]);
@@ -121,14 +148,14 @@ function DashboardPage() {
             },
             {
                 label: "Interview rate",
-                value: `${metrics.responseRate}%`,
-                detail: `${metrics.counts.INTERVIEW} reached interview stage`,
+                value: `${metrics.interviewRate}%`,
+                detail: `${metrics.interviewCount} reached an interview stage`,
                 tone: "warm",
             },
             {
                 label: "Offer rate",
                 value: `${metrics.offerRate}%`,
-                detail: `${metrics.counts.OFFER} offer${metrics.counts.OFFER === 1 ? "" : "s"} received`,
+                detail: `${metrics.counts.OFFER_RECEIVED} offer${metrics.counts.OFFER_RECEIVED === 1 ? "" : "s"} received`,
                 tone: "success",
             },
             {
@@ -162,13 +189,18 @@ function DashboardPage() {
                 const daysSinceActivity = getDaysSince(getLastActivityTimestamp(application));
 
                 return (
-                    daysSinceActivity !== null &&
-                    daysSinceActivity >= 14 &&
-                    status !== "REJECTED" &&
-                    status !== "OFFER"
+                    ((application.nextActionDate && new Date(application.nextActionDate).getTime() <= Date.now()) ||
+                        (daysSinceActivity !== null && daysSinceActivity >= 14)) &&
+                    isFollowUpCandidate(status)
                 );
             })
-            .sort((a, b) => getLastActivityTimestamp(a) - getLastActivityTimestamp(b))
+            .sort((a, b) => {
+                const aDue = new Date(a.nextActionDate || "9999-12-31").getTime();
+                const bDue = new Date(b.nextActionDate || "9999-12-31").getTime();
+                if (aDue !== bDue) return aDue - bDue;
+                return getPriorityRank(String(a.priority || "MEDIUM").toUpperCase()) -
+                    getPriorityRank(String(b.priority || "MEDIUM").toUpperCase());
+            })
             .slice(0, 4);
     }, [applications]);
 
@@ -197,9 +229,9 @@ function DashboardPage() {
             <header className="page-header">
                 <div>
                     <p className="page-kicker">Dashboard</p>
-                    <h1 className="page-title">Keep your pipeline moving with clearer signals.</h1>
+                    <h1 className="page-title">Keep your pipeline moving with cleaner status signals.</h1>
                     <p className="page-subtitle">
-                        Review conversion, identify stale applications, and keep the next follow-up visible.
+                        Review conversion, identify stale opportunities, and keep recruiter follow-up visible.
                     </p>
                 </div>
 
@@ -233,7 +265,7 @@ function DashboardPage() {
                         {stageBreakdown.map((item) => (
                             <div key={item.status} className="dashboard-stage-row">
                                 <div className="dashboard-stage-meta">
-                                    <span className={`status-badge ${item.status.toLowerCase()}`}>{item.status}</span>
+                                    <span className={`status-badge ${item.status.toLowerCase()}`}>{formatEnumLabel(item.status)}</span>
                                     <span className="dashboard-stage-count">{item.count}</span>
                                 </div>
 
@@ -268,14 +300,21 @@ function DashboardPage() {
                                 return (
                                     <article key={application.id} className="dashboard-followup-item">
                                         <div>
-                                            <p className="dashboard-followup-title">{application.position}</p>
+                                            <p className="dashboard-followup-title">{application.jobTitle}</p>
                                             <p className="dashboard-followup-meta">
-                                                {application.companyName || "Unknown company"} • {application.status || "APPLIED"}
+                                                {application.companyName || "Unknown company"} • {application.nextAction || formatEnumLabel(application.status || "APPLIED")}
                                             </p>
                                         </div>
-                                        <p className="dashboard-followup-age">
-                                            {daysSinceActivity} day{daysSinceActivity === 1 ? "" : "s"} idle
-                                        </p>
+                                        <div className="dashboard-followup-stack">
+                                            <span className={`priority-badge ${String(application.priority || "MEDIUM").toLowerCase()}`}>
+                                                {formatEnumLabel(application.priority || "MEDIUM")}
+                                            </span>
+                                            <p className="dashboard-followup-age">
+                                                {application.nextActionDate
+                                                    ? `Due ${formatDate(application.nextActionDate)}`
+                                                    : `${daysSinceActivity} day${daysSinceActivity === 1 ? "" : "s"} idle`}
+                                            </p>
+                                        </div>
                                     </article>
                                 );
                             })}
@@ -299,14 +338,19 @@ function DashboardPage() {
                         {recentApplications.map((application) => (
                             <article key={application.id} className="dashboard-recent-item">
                                 <div>
-                                    <p className="dashboard-recent-title">{application.position}</p>
+                                    <p className="dashboard-recent-title">{application.jobTitle}</p>
                                     <p className="dashboard-recent-meta">
                                         {application.companyName || "Unknown company"} • {formatDate(application.appliedDate || application.createdAt)}
                                     </p>
                                 </div>
-                                <span className={`status-badge ${String(application.status || "APPLIED").toLowerCase()}`}>
-                                    {application.status || "APPLIED"}
-                                </span>
+                                <div className="dashboard-recent-tags">
+                                    <span className={`priority-badge ${String(application.priority || "MEDIUM").toLowerCase()}`}>
+                                        {formatEnumLabel(application.priority || "MEDIUM")}
+                                    </span>
+                                    <span className={`status-badge ${String(application.status || "APPLIED").toLowerCase()}`}>
+                                        {formatEnumLabel(application.status || "APPLIED")}
+                                    </span>
+                                </div>
                             </article>
                         ))}
                     </div>

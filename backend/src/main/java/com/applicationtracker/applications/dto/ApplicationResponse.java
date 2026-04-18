@@ -1,26 +1,33 @@
 package com.applicationtracker.applications.dto;
 
+import com.applicationtracker.applications.entity.ApplicationSource;
+import com.applicationtracker.applications.entity.ApplicationPriority;
+import com.applicationtracker.applications.entity.ApplicationStatus;
+import com.applicationtracker.applications.entity.JobType;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ApplicationResponse {
     private Long id;
-    private String fullName;
-    private String email;
-    private String phone;
+    private String jobTitle;
     private String companyName;
-    private String location;
-    private String position;
-    private String status;
-    private String coverLetter;
-    private Integer yearsExperience;
-    private LocalDate availableFrom;
+    private String jobLocation;
+    private ApplicationStatus status;
+    private ApplicationPriority priority;
+    private String jobUrl;
+    private ApplicationSource source;
     private LocalDate appliedDate;
-    private String workType;
-    private Integer salaryExpectation;
+    private Integer salaryMin;
+    private Integer salaryMax;
+    private JobType jobType;
     private String notes;
-    private String portfolioUrl;
-    private String linkedinUrl;
+    private String nextAction;
+    private LocalDate nextActionDate;
+    private String recruiterName;
+    private String recruiterPhone;
+    private String recruiterEmail;
+    private String coverLetter;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String resumeFileName;
@@ -38,28 +45,12 @@ public class ApplicationResponse {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getJobTitle() {
+        return jobTitle;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public String getCompanyName() {
@@ -70,52 +61,44 @@ public class ApplicationResponse {
         this.companyName = companyName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getJobLocation() {
+        return jobLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setJobLocation(String jobLocation) {
+        this.jobLocation = jobLocation;
     }
 
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getStatus() {
+    public ApplicationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApplicationStatus status) {
         this.status = status;
     }
 
-    public String getCoverLetter() {
-        return coverLetter;
+    public ApplicationPriority getPriority() {
+        return priority;
     }
 
-    public void setCoverLetter(String coverLetter) {
-        this.coverLetter = coverLetter;
+    public void setPriority(ApplicationPriority priority) {
+        this.priority = priority;
     }
 
-    public Integer getYearsExperience() {
-        return yearsExperience;
+    public String getJobUrl() {
+        return jobUrl;
     }
 
-    public void setYearsExperience(Integer yearsExperience) {
-        this.yearsExperience = yearsExperience;
+    public void setJobUrl(String jobUrl) {
+        this.jobUrl = jobUrl;
     }
 
-    public LocalDate getAvailableFrom() {
-        return availableFrom;
+    public ApplicationSource getSource() {
+        return source;
     }
 
-    public void setAvailableFrom(LocalDate availableFrom) {
-        this.availableFrom = availableFrom;
+    public void setSource(ApplicationSource source) {
+        this.source = source;
     }
 
     public LocalDate getAppliedDate() {
@@ -126,20 +109,28 @@ public class ApplicationResponse {
         this.appliedDate = appliedDate;
     }
 
-    public String getWorkType() {
-        return workType;
+    public Integer getSalaryMin() {
+        return salaryMin;
     }
 
-    public void setWorkType(String workType) {
-        this.workType = workType;
+    public void setSalaryMin(Integer salaryMin) {
+        this.salaryMin = salaryMin;
     }
 
-    public Integer getSalaryExpectation() {
-        return salaryExpectation;
+    public Integer getSalaryMax() {
+        return salaryMax;
     }
 
-    public void setSalaryExpectation(Integer salaryExpectation) {
-        this.salaryExpectation = salaryExpectation;
+    public void setSalaryMax(Integer salaryMax) {
+        this.salaryMax = salaryMax;
+    }
+
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
     }
 
     public String getNotes() {
@@ -150,20 +141,52 @@ public class ApplicationResponse {
         this.notes = notes;
     }
 
-    public String getPortfolioUrl() {
-        return portfolioUrl;
+    public String getNextAction() {
+        return nextAction;
     }
 
-    public void setPortfolioUrl(String portfolioUrl) {
-        this.portfolioUrl = portfolioUrl;
+    public void setNextAction(String nextAction) {
+        this.nextAction = nextAction;
     }
 
-    public String getLinkedinUrl() {
-        return linkedinUrl;
+    public LocalDate getNextActionDate() {
+        return nextActionDate;
     }
 
-    public void setLinkedinUrl(String linkedinUrl) {
-        this.linkedinUrl = linkedinUrl;
+    public void setNextActionDate(LocalDate nextActionDate) {
+        this.nextActionDate = nextActionDate;
+    }
+
+    public String getRecruiterName() {
+        return recruiterName;
+    }
+
+    public void setRecruiterName(String recruiterName) {
+        this.recruiterName = recruiterName;
+    }
+
+    public String getRecruiterPhone() {
+        return recruiterPhone;
+    }
+
+    public void setRecruiterPhone(String recruiterPhone) {
+        this.recruiterPhone = recruiterPhone;
+    }
+
+    public String getRecruiterEmail() {
+        return recruiterEmail;
+    }
+
+    public void setRecruiterEmail(String recruiterEmail) {
+        this.recruiterEmail = recruiterEmail;
+    }
+
+    public String getCoverLetter() {
+        return coverLetter;
+    }
+
+    public void setCoverLetter(String coverLetter) {
+        this.coverLetter = coverLetter;
     }
 
     public LocalDateTime getCreatedAt() {

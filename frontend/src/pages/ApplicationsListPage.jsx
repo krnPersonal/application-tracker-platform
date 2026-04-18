@@ -2,14 +2,24 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../api/Client.js";
 
-const STATUS_OPTIONS = ["ALL", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"];
-const WORK_TYPE_OPTIONS = ["ALL", "Remote", "Hybrid", "Onsite"];
+const STATUS_OPTIONS = [
+    "ALL",
+    "APPLIED",
+    "INTERVIEW_SCHEDULED",
+    "INTERVIEWED",
+    "OFFER_RECEIVED",
+    "REJECTED",
+    "WITHDRAWN",
+];
+const JOB_TYPE_OPTIONS = ["ALL", "FULL_TIME", "CONTRACT", "PART_TIME", "INTERN"];
+const PRIORITY_OPTIONS = ["ALL", "HIGH", "MEDIUM", "LOW"];
 const SORT_OPTIONS = [
     { value: "activity-desc", label: "Latest activity" },
     { value: "created-desc", label: "Newest created" },
     { value: "created-asc", label: "Oldest created" },
-    { value: "name-asc", label: "Name A-Z" },
-    { value: "position-asc", label: "Role A-Z" },
+    { value: "next-action-asc", label: "Next action due" },
+    { value: "company-asc", label: "Company A-Z" },
+    { value: "job-title-asc", label: "Job title A-Z" },
 ];
 
 function getLastActivityTimestamp(application) {
@@ -37,13 +47,30 @@ function formatDate(value) {
     });
 }
 
+function formatEnumLabel(value) {
+    if (!value) return "—";
+    return String(value)
+        .split("_")
+        .map((part) => part.charAt(0) + part.slice(1).toLowerCase())
+        .join(" ");
+}
+
+function formatSalaryRange(application) {
+    const { salaryMin, salaryMax } = application;
+    if (salaryMin == null && salaryMax == null) return "—";
+    if (salaryMin != null && salaryMax != null) return `$${salaryMin.toLocaleString()} - $${salaryMax.toLocaleString()}`;
+    if (salaryMin != null) return `From $${salaryMin.toLocaleString()}`;
+    return `Up to $${salaryMax.toLocaleString()}`;
+}
+
 function ApplicationsListPage() {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [query, setQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("ALL");
-    const [workTypeFilter, setWorkTypeFilter] = useState("ALL");
+    const [jobTypeFilter, setJobTypeFilter] = useState("ALL");
+    const [priorityFilter, setPriorityFilter] = useState("ALL");
     const [sortBy, setSortBy] = useState("activity-desc");
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
@@ -90,16 +117,22 @@ function ApplicationsListPage() {
             const status = String(application.status || "").toUpperCase();
             const daysSinceActivity = getDaysSince(getLastActivityTimestamp(application));
 
-            if (status === "INTERVIEW") counts.interviews += 1;
-            if (status === "OFFER") counts.offers += 1;
-            if (daysSinceActivity !== null && daysSinceActivity >= 14 && status !== "REJECTED" && status !== "OFFER") {
+            if (status === "INTERVIEW_SCHEDULED" || status === "INTERVIEWED") counts.interviews += 1;
+            if (status === "OFFER_RECEIVED") counts.offers += 1;
+            if (
+                daysSinceActivity !== null &&
+                daysSinceActivity >= 14 &&
+                status !== "REJECTED" &&
+                status !== "WITHDRAWN" &&
+                status !== "OFFER_RECEIVED"
+            ) {
                 counts.followUps += 1;
             }
         }
 
         return [
             { label: "Total pipeline", value: counts.total, tone: "default" },
-            { label: "Interview stage", value: counts.interviews, tone: "warm" },
+            { label: "Interview stages", value: counts.interviews, tone: "warm" },
             { label: "Offers", value: counts.offers, tone: "success" },
             { label: "Needs follow-up", value: counts.followUps, tone: "cool" },
         ];
@@ -110,22 +143,23 @@ function ApplicationsListPage() {
 
         return applications.filter((application) => {
             const status = String(application.status || "").toUpperCase();
-            const workType = String(application.workType || "").toLowerCase();
+            const jobType = String(application.jobType || "").toUpperCase();
+            const priority = String(application.priority || "").toUpperCase();
             const matchesStatus = statusFilter === "ALL" || status === statusFilter;
-            const matchesWorkType =
-                workTypeFilter === "ALL" || workType === workTypeFilter.toLowerCase();
+            const matchesJobType = jobTypeFilter === "ALL" || jobType === jobTypeFilter;
+            const matchesPriority = priorityFilter === "ALL" || priority === priorityFilter;
             const matchesQuery =
                 !normalizedQuery ||
                 String(application.companyName || "").toLowerCase().includes(normalizedQuery) ||
-                String(application.location || "").toLowerCase().includes(normalizedQuery) ||
-                String(application.fullName || "").toLowerCase().includes(normalizedQuery) ||
-                String(application.position || "").toLowerCase().includes(normalizedQuery) ||
-                String(application.email || "").toLowerCase().includes(normalizedQuery) ||
-                String(application.phone || "").toLowerCase().includes(normalizedQuery);
+                String(application.jobTitle || "").toLowerCase().includes(normalizedQuery) ||
+                String(application.jobLocation || "").toLowerCase().includes(normalizedQuery) ||
+                String(application.recruiterName || "").toLowerCase().includes(normalizedQuery) ||
+                String(application.recruiterEmail || "").toLowerCase().includes(normalizedQuery) ||
+                String(application.jobUrl || "").toLowerCase().includes(normalizedQuery);
 
-            return matchesStatus && matchesWorkType && matchesQuery;
+            return matchesStatus && matchesJobType && matchesPriority && matchesQuery;
         });
-    }, [applications, query, statusFilter, workTypeFilter]);
+    }, [applications, query, statusFilter, jobTypeFilter, priorityFilter]);
 
     const sorted = useMemo(() => {
         const items = [...filtered];
@@ -136,10 +170,15 @@ function ApplicationsListPage() {
                     return new Date(right.createdAt || 0).getTime() - new Date(left.createdAt || 0).getTime();
                 case "created-asc":
                     return new Date(left.createdAt || 0).getTime() - new Date(right.createdAt || 0).getTime();
-                case "name-asc":
-                    return String(left.fullName || "").localeCompare(String(right.fullName || ""));
-                case "position-asc":
-                    return String(left.position || "").localeCompare(String(right.position || ""));
+                case "company-asc":
+                    return String(left.companyName || "").localeCompare(String(right.companyName || ""));
+                case "job-title-asc":
+                    return String(left.jobTitle || "").localeCompare(String(right.jobTitle || ""));
+                case "next-action-asc": {
+                    const leftDate = new Date(left.nextActionDate || "9999-12-31").getTime();
+                    const rightDate = new Date(right.nextActionDate || "9999-12-31").getTime();
+                    return leftDate - rightDate;
+                }
                 case "activity-desc":
                 default:
                     return getLastActivityTimestamp(right) - getLastActivityTimestamp(left);
@@ -151,7 +190,7 @@ function ApplicationsListPage() {
 
     useEffect(() => {
         setPage(1);
-    }, [query, statusFilter, workTypeFilter, sortBy, pageSize]);
+    }, [query, statusFilter, jobTypeFilter, priorityFilter, sortBy, pageSize]);
 
     const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
     const currentPage = Math.min(page, totalPages);
@@ -179,12 +218,13 @@ function ApplicationsListPage() {
     }, [sorted, currentPage, pageSize]);
 
     const filtersApplied =
-        query.trim() !== "" || statusFilter !== "ALL" || workTypeFilter !== "ALL";
+        query.trim() !== "" || statusFilter !== "ALL" || jobTypeFilter !== "ALL" || priorityFilter !== "ALL";
 
     function clearFilters() {
         setQuery("");
         setStatusFilter("ALL");
-        setWorkTypeFilter("ALL");
+        setJobTypeFilter("ALL");
+        setPriorityFilter("ALL");
         setSortBy("activity-desc");
     }
 
@@ -192,29 +232,35 @@ function ApplicationsListPage() {
         const rows = sorted.map((application) => ({
             id: application.id ?? "",
             companyName: application.companyName ?? "",
-            fullName: application.fullName ?? "",
-            email: application.email ?? "",
-            phone: application.phone ?? "",
-            location: application.location ?? "",
-            position: application.position ?? "",
-            workType: application.workType ?? "",
+            jobTitle: application.jobTitle ?? "",
+            jobLocation: application.jobLocation ?? "",
             status: application.status ?? "",
+            priority: application.priority ?? "",
+            source: application.source ?? "",
+            jobType: application.jobType ?? "",
+            nextAction: application.nextAction ?? "",
+            nextActionDate: formatDate(application.nextActionDate),
+            recruiterName: application.recruiterName ?? "",
+            recruiterEmail: application.recruiterEmail ?? "",
             appliedDate: formatDate(application.appliedDate),
-            createdAt: formatDate(application.createdAt),
+            salaryRange: formatSalaryRange(application),
         }));
 
         const headers = [
             "id",
             "companyName",
-            "fullName",
-            "email",
-            "phone",
-            "location",
-            "position",
-            "workType",
+            "jobTitle",
+            "jobLocation",
             "status",
+            "priority",
+            "source",
+            "jobType",
+            "nextAction",
+            "nextActionDate",
+            "recruiterName",
+            "recruiterEmail",
             "appliedDate",
-            "createdAt",
+            "salaryRange",
         ];
 
         const escape = (value) => {
@@ -266,9 +312,9 @@ function ApplicationsListPage() {
             <header className="page-header">
                 <div>
                     <p className="page-kicker">Applications</p>
-                    <h1 className="page-title">Manage your pipeline with clearer follow-up visibility.</h1>
+                    <h1 className="page-title">Track each opportunity by company, source, status, and recruiter contact.</h1>
                     <p className="page-subtitle">
-                        Search, filter, sort, and export your applications from one place.
+                        Search, filter, sort, and export your pipeline from one place.
                     </p>
                 </div>
                 <div className="form-actions">
@@ -322,7 +368,7 @@ function ApplicationsListPage() {
                         <input
                             type="search"
                             className="input"
-                            placeholder="Search by company, location, name, role, email, or phone"
+                            placeholder="Search by company, job title, location, recruiter, or URL"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
                         />
@@ -337,22 +383,37 @@ function ApplicationsListPage() {
                         >
                             {STATUS_OPTIONS.map((option) => (
                                 <option key={option} value={option}>
-                                    {option === "ALL" ? "All statuses" : option}
+                                    {option === "ALL" ? "All statuses" : formatEnumLabel(option)}
                                 </option>
                             ))}
                         </select>
                     </div>
 
                     <div className="field">
-                        <label className="label">Work type</label>
+                        <label className="label">Job type</label>
                         <select
                             className="input"
-                            value={workTypeFilter}
-                            onChange={(event) => setWorkTypeFilter(event.target.value)}
+                            value={jobTypeFilter}
+                            onChange={(event) => setJobTypeFilter(event.target.value)}
                         >
-                            {WORK_TYPE_OPTIONS.map((option) => (
+                            {JOB_TYPE_OPTIONS.map((option) => (
                                 <option key={option} value={option}>
-                                    {option === "ALL" ? "All work types" : option}
+                                    {option === "ALL" ? "All job types" : formatEnumLabel(option)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="field">
+                        <label className="label">Priority</label>
+                        <select
+                            className="input"
+                            value={priorityFilter}
+                            onChange={(event) => setPriorityFilter(event.target.value)}
+                        >
+                            {PRIORITY_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option === "ALL" ? "All priorities" : formatEnumLabel(option)}
                                 </option>
                             ))}
                         </select>
@@ -406,7 +467,7 @@ function ApplicationsListPage() {
                     <div className="applications-empty-state">
                         <p className="applications-empty-title">No applications to show.</p>
                         <p className="page-subtitle">
-                            Adjust your filters or add new application flows in the next slice.
+                            Adjust your filters or add a new job opportunity.
                         </p>
                     </div>
                 ) : (
@@ -418,32 +479,52 @@ function ApplicationsListPage() {
                                 <article key={application.id} className="applications-record-card">
                                     <div className="applications-record-main">
                                         <div>
-                                            <p className="applications-record-title">{application.position}</p>
+                                            <p className="applications-record-title">{application.jobTitle}</p>
                                             <p className="applications-record-meta">
-                                                {application.companyName || "Unknown company"} • {application.fullName}
+                                                {application.companyName || "Unknown company"} • {application.jobLocation || "Location TBD"}
                                             </p>
                                         </div>
                                         <span className={`status-badge ${String(application.status || "APPLIED").toLowerCase()}`}>
-                                            {application.status || "APPLIED"}
+                                            {formatEnumLabel(application.status || "APPLIED")}
                                         </span>
                                     </div>
 
                                     <div className="applications-record-grid">
                                         <div>
-                                            <p className="meta-label">Location</p>
-                                            <p className="meta-value">{application.location || "—"}</p>
+                                            <p className="meta-label">Priority</p>
+                                            <p className="meta-value">
+                                                <span className={`priority-badge ${String(application.priority || "MEDIUM").toLowerCase()}`}>
+                                                    {formatEnumLabel(application.priority || "MEDIUM")}
+                                                </span>
+                                            </p>
                                         </div>
                                         <div>
-                                            <p className="meta-label">Phone</p>
-                                            <p className="meta-value">{application.phone || "—"}</p>
+                                            <p className="meta-label">Source</p>
+                                            <p className="meta-value">{formatEnumLabel(application.source)}</p>
                                         </div>
                                         <div>
-                                            <p className="meta-label">Work type</p>
-                                            <p className="meta-value">{application.workType || "—"}</p>
+                                            <p className="meta-label">Job type</p>
+                                            <p className="meta-value">{formatEnumLabel(application.jobType)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="meta-label">Recruiter</p>
+                                            <p className="meta-value">{application.recruiterName || "—"}</p>
                                         </div>
                                         <div>
                                             <p className="meta-label">Applied</p>
                                             <p className="meta-value">{formatDate(application.appliedDate || application.createdAt)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="meta-label">Salary</p>
+                                            <p className="meta-value">{formatSalaryRange(application)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="meta-label">Next action</p>
+                                            <p className="meta-value">
+                                                {application.nextAction
+                                                    ? `${application.nextAction}${application.nextActionDate ? ` • ${formatDate(application.nextActionDate)}` : ""}`
+                                                    : "—"}
+                                            </p>
                                         </div>
                                         <div>
                                             <p className="meta-label">Last activity</p>

@@ -696,16 +696,24 @@ input {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
 }
 
-.dashboard-stage-fill.interview {
+.dashboard-stage-fill.interview_scheduled {
     background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-.dashboard-stage-fill.offer {
+.dashboard-stage-fill.interviewed {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+}
+
+.dashboard-stage-fill.offer_received {
     background: linear-gradient(135deg, #10b981, #0f766e);
 }
 
 .dashboard-stage-fill.rejected {
     background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.dashboard-stage-fill.withdrawn {
+    background: linear-gradient(135deg, #64748b, #475569);
 }
 
 .dashboard-followup-item,
@@ -742,6 +750,13 @@ input {
     white-space: nowrap;
 }
 
+.dashboard-followup-stack,
+.dashboard-recent-tags {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -760,12 +775,17 @@ input {
     color: #1d4ed8;
 }
 
-.status-badge.interview {
+.status-badge.interview_scheduled {
     background: rgba(245, 158, 11, 0.14);
     color: #b45309;
 }
 
-.status-badge.offer {
+.status-badge.interviewed {
+    background: rgba(249, 115, 22, 0.14);
+    color: #c2410c;
+}
+
+.status-badge.offer_received {
     background: rgba(16, 185, 129, 0.14);
     color: #0f766e;
 }
@@ -773,6 +793,39 @@ input {
 .status-badge.rejected {
     background: rgba(239, 68, 68, 0.14);
     color: #b91c1c;
+}
+
+.status-badge.withdrawn {
+    background: rgba(100, 116, 139, 0.16);
+    color: #475569;
+}
+
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.priority-badge.high {
+    background: rgba(239, 68, 68, 0.14);
+    color: #b91c1c;
+}
+
+.priority-badge.medium {
+    background: rgba(245, 158, 11, 0.14);
+    color: #b45309;
+}
+
+.priority-badge.low {
+    background: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
 }
 
 .landing-page {

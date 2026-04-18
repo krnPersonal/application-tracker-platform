@@ -2,25 +2,48 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/Client.js";
 
+const STATUS_OPTIONS = [
+    "APPLIED",
+    "INTERVIEW_SCHEDULED",
+    "INTERVIEWED",
+    "OFFER_RECEIVED",
+    "REJECTED",
+    "WITHDRAWN",
+];
+
+const SOURCE_OPTIONS = ["LINKEDIN", "INDEED", "COMPANY_WEBSITE", "REFERRAL", "OTHER"];
+const JOB_TYPE_OPTIONS = ["FULL_TIME", "CONTRACT", "PART_TIME", "INTERN"];
+const PRIORITY_OPTIONS = ["LOW", "MEDIUM", "HIGH"];
+
+function formatEnumLabel(value) {
+    return value
+        .split("_")
+        .map((part) => part.charAt(0) + part.slice(1).toLowerCase())
+        .join(" ");
+}
+
 function ApplicationFormPage() {
     const navigate = useNavigate();
     const [form, setForm] = useState({
-        fullName: "",
-        email: "",
-        phone: "",
+        jobTitle: "",
         companyName: "",
-        location: "",
-        position: "",
-        appliedDate: "",
-        workType: "Onsite",
+        jobLocation: "",
         status: "APPLIED",
-        coverLetter: "",
-        yearsExperience: "",
-        availableFrom: "",
-        salaryExpectation: "",
+        priority: "MEDIUM",
+        jobUrl: "",
+        source: "LINKEDIN",
+        appliedDate: "",
+        salaryMin: "",
+        salaryMax: "",
+        jobType: "FULL_TIME",
         notes: "",
-        portfolioUrl: "",
-        linkedinUrl: "",
+        nextAction: "",
+        nextActionDate: "",
+        recruiterName: "",
+        recruiterPhone: "",
+        recruiterEmail: "",
+        resumeFileName: "",
+        coverLetter: "",
     });
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
@@ -35,43 +58,45 @@ function ApplicationFormPage() {
         setSaving(true);
 
         try {
-            if (!form.fullName.trim()) {
-                throw new Error("Full name is required");
-            }
-            if (!form.email.trim()) {
-                throw new Error("Email is required");
-            }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-                throw new Error("Enter a valid email address");
-            }
-            if (!form.position.trim()) {
-                throw new Error("Position is required");
+            if (!form.jobTitle.trim()) {
+                throw new Error("Job title is required");
             }
             if (!form.companyName.trim()) {
                 throw new Error("Company name is required");
             }
-            if (form.yearsExperience === "" || Number.isNaN(Number(form.yearsExperience))) {
-                throw new Error("Years of experience is required");
+            if (form.recruiterEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.recruiterEmail.trim())) {
+                throw new Error("Enter a valid recruiter email address");
             }
 
             const payload = {
-                fullName: form.fullName.trim(),
-                email: form.email.trim(),
-                phone: form.phone.trim() || null,
+                jobTitle: form.jobTitle.trim(),
                 companyName: form.companyName.trim(),
-                location: form.location.trim() || null,
-                position: form.position.trim(),
-                appliedDate: form.appliedDate || null,
-                workType: form.workType || null,
+                jobLocation: form.jobLocation.trim() || null,
                 status: form.status || "APPLIED",
-                coverLetter: form.coverLetter.trim() || null,
-                yearsExperience: form.yearsExperience === "" ? 0 : Number(form.yearsExperience),
-                availableFrom: form.availableFrom || null,
-                salaryExpectation: form.salaryExpectation === "" ? null : Number(form.salaryExpectation),
+                priority: form.priority || "MEDIUM",
+                jobUrl: form.jobUrl.trim() || null,
+                source: form.source || null,
+                appliedDate: form.appliedDate || null,
+                salaryMin: form.salaryMin === "" ? null : Number(form.salaryMin),
+                salaryMax: form.salaryMax === "" ? null : Number(form.salaryMax),
+                jobType: form.jobType || null,
                 notes: form.notes.trim() || null,
-                portfolioUrl: form.portfolioUrl.trim() || null,
-                linkedinUrl: form.linkedinUrl.trim() || null,
+                nextAction: form.nextAction.trim() || null,
+                nextActionDate: form.nextActionDate || null,
+                recruiterName: form.recruiterName.trim() || null,
+                recruiterPhone: form.recruiterPhone.trim() || null,
+                recruiterEmail: form.recruiterEmail.trim() || null,
+                resumeFileName: form.resumeFileName.trim() || null,
+                coverLetter: form.coverLetter.trim() || null,
             };
+
+            if (
+                payload.salaryMin !== null &&
+                payload.salaryMax !== null &&
+                payload.salaryMin > payload.salaryMax
+            ) {
+                throw new Error("Salary minimum cannot be greater than salary maximum");
+            }
 
             await apiFetch("/api/applications", {
                 method: "POST",
@@ -91,9 +116,9 @@ function ApplicationFormPage() {
             <header className="page-header">
                 <div>
                     <p className="page-kicker">New application</p>
-                    <h1 className="page-title">Capture a new opportunity while the details are still fresh.</h1>
+                    <h1 className="page-title">Capture the job, the source, and the recruiter details in one place.</h1>
                     <p className="page-subtitle">
-                        Add the core application details now. Resume upload and richer follow-up history can come in later slices.
+                        This form is now centered on the opportunity itself so you can track where you applied and what you need for follow-up.
                     </p>
                 </div>
             </header>
@@ -101,70 +126,20 @@ function ApplicationFormPage() {
             {error && <p className="form-error">{error}</p>}
 
             <section className="card form-section">
-                <h2 className="section-title">Applicant info</h2>
+                <h2 className="section-title">Role and company</h2>
                 <div className="form-grid">
                     <div className="field">
-                        <label className="label">Full name</label>
+                        <label className="label">Job title</label>
                         <input
                             type="text"
-                            placeholder="Jane Doe"
+                            placeholder="Frontend Engineer"
                             className="input"
-                            value={form.fullName}
-                            onChange={(event) => updateField("fullName", event.target.value)}
+                            value={form.jobTitle}
+                            onChange={(event) => updateField("jobTitle", event.target.value)}
                             required
                         />
                     </div>
 
-                    <div className="field">
-                        <label className="label">Email</label>
-                        <input
-                            type="email"
-                            placeholder="jane@example.com"
-                            className="input"
-                            value={form.email}
-                            onChange={(event) => updateField("email", event.target.value)}
-                            required
-                        />
-                    </div>
-
-                    <div className="field">
-                        <label className="label">Phone</label>
-                        <input
-                            type="tel"
-                            placeholder="+1 555 123 4567"
-                            className="input"
-                            value={form.phone}
-                            onChange={(event) => updateField("phone", event.target.value)}
-                        />
-                    </div>
-
-                    <div className="field">
-                        <label className="label">Portfolio URL</label>
-                        <input
-                            type="url"
-                            placeholder="https://portfolio.com"
-                            className="input"
-                            value={form.portfolioUrl}
-                            onChange={(event) => updateField("portfolioUrl", event.target.value)}
-                        />
-                    </div>
-
-                    <div className="field span-2">
-                        <label className="label">LinkedIn</label>
-                        <input
-                            type="url"
-                            placeholder="https://linkedin.com/in/username"
-                            className="input"
-                            value={form.linkedinUrl}
-                            onChange={(event) => updateField("linkedinUrl", event.target.value)}
-                        />
-                    </div>
-                </div>
-            </section>
-
-            <section className="card form-section">
-                <h2 className="section-title">Job details</h2>
-                <div className="form-grid">
                     <div className="field">
                         <label className="label">Company name</label>
                         <input
@@ -178,25 +153,13 @@ function ApplicationFormPage() {
                     </div>
 
                     <div className="field">
-                        <label className="label">Location</label>
+                        <label className="label">Job location</label>
                         <input
                             type="text"
-                            placeholder="Chicago, IL"
+                            placeholder="Chicago, IL or Remote"
                             className="input"
-                            value={form.location}
-                            onChange={(event) => updateField("location", event.target.value)}
-                        />
-                    </div>
-
-                    <div className="field">
-                        <label className="label">Position</label>
-                        <input
-                            type="text"
-                            placeholder="Frontend Engineer"
-                            className="input"
-                            value={form.position}
-                            onChange={(event) => updateField("position", event.target.value)}
-                            required
+                            value={form.jobLocation}
+                            onChange={(event) => updateField("jobLocation", event.target.value)}
                         />
                     </div>
 
@@ -211,81 +174,191 @@ function ApplicationFormPage() {
                     </div>
 
                     <div className="field">
-                        <label className="label">Available from</label>
-                        <input
-                            type="date"
-                            className="input"
-                            value={form.availableFrom}
-                            onChange={(event) => updateField("availableFrom", event.target.value)}
-                        />
-                    </div>
-
-                    <div className="field">
-                        <label className="label">Work type</label>
+                        <label className="label">Application status</label>
                         <select
                             className="input"
-                            value={form.workType}
-                            onChange={(event) => updateField("workType", event.target.value)}
+                            value={form.status}
+                            onChange={(event) => updateField("status", event.target.value)}
                         >
-                            <option value="Onsite">Onsite</option>
-                            <option value="Hybrid">Hybrid</option>
-                            <option value="Remote">Remote</option>
+                            {STATUS_OPTIONS.map((status) => (
+                                <option key={status} value={status}>
+                                    {formatEnumLabel(status)}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
-                    <div className="field span-2">
-                        <label className="label">Status</label>
-                        <div className="option-group">
-                            {["APPLIED", "INTERVIEW", "OFFER", "REJECTED"].map((status) => (
-                                <label key={status} className="option">
-                                    <input
-                                        type="radio"
-                                        name="status"
-                                        value={status}
-                                        checked={form.status === status}
-                                        onChange={(event) => updateField("status", event.target.value)}
-                                    />
-                                    {status}
-                                </label>
+                    <div className="field">
+                        <label className="label">Priority</label>
+                        <select
+                            className="input"
+                            value={form.priority}
+                            onChange={(event) => updateField("priority", event.target.value)}
+                        >
+                            {PRIORITY_OPTIONS.map((priority) => (
+                                <option key={priority} value={priority}>
+                                    {formatEnumLabel(priority)}
+                                </option>
                             ))}
-                        </div>
+                        </select>
                     </div>
 
                     <div className="field">
-                        <label className="label">Years of experience</label>
-                        <input
-                            type="number"
-                            min="0"
+                        <label className="label">Job type</label>
+                        <select
                             className="input"
-                            value={form.yearsExperience}
-                            onChange={(event) => updateField("yearsExperience", event.target.value)}
-                            required
+                            value={form.jobType}
+                            onChange={(event) => updateField("jobType", event.target.value)}
+                        >
+                            {JOB_TYPE_OPTIONS.map((jobType) => (
+                                <option key={jobType} value={jobType}>
+                                    {formatEnumLabel(jobType)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section className="card form-section">
+                <h2 className="section-title">Source and compensation</h2>
+                <div className="form-grid">
+                    <div className="field span-2">
+                        <label className="label">Job URL</label>
+                        <input
+                            type="url"
+                            placeholder="https://company.com/careers/role"
+                            className="input"
+                            value={form.jobUrl}
+                            onChange={(event) => updateField("jobUrl", event.target.value)}
                         />
                     </div>
 
                     <div className="field">
-                        <label className="label">Salary expectation</label>
+                        <label className="label">Source</label>
+                        <select
+                            className="input"
+                            value={form.source}
+                            onChange={(event) => updateField("source", event.target.value)}
+                        >
+                            {SOURCE_OPTIONS.map((source) => (
+                                <option key={source} value={source}>
+                                    {formatEnumLabel(source)}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="field">
+                        <label className="label">Salary minimum</label>
                         <input
                             type="number"
                             min="0"
                             className="input"
                             placeholder="90000"
-                            value={form.salaryExpectation}
-                            onChange={(event) => updateField("salaryExpectation", event.target.value)}
+                            value={form.salaryMin}
+                            onChange={(event) => updateField("salaryMin", event.target.value)}
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label className="label">Salary maximum</label>
+                        <input
+                            type="number"
+                            min="0"
+                            className="input"
+                            placeholder="120000"
+                            value={form.salaryMax}
+                            onChange={(event) => updateField("salaryMax", event.target.value)}
                         />
                     </div>
                 </div>
             </section>
 
             <section className="card form-section">
-                <h2 className="section-title">Notes and context</h2>
+                <h2 className="section-title">Follow-up planning</h2>
                 <div className="form-grid">
                     <div className="field span-2">
-                        <label className="label">Cover letter notes</label>
+                        <label className="label">Next action</label>
+                        <input
+                            type="text"
+                            placeholder="Send follow-up email to recruiter"
+                            className="input"
+                            value={form.nextAction}
+                            onChange={(event) => updateField("nextAction", event.target.value)}
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label className="label">Next action date</label>
+                        <input
+                            type="date"
+                            className="input"
+                            value={form.nextActionDate}
+                            onChange={(event) => updateField("nextActionDate", event.target.value)}
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="card form-section">
+                <h2 className="section-title">Recruiter contact</h2>
+                <div className="form-grid">
+                    <div className="field">
+                        <label className="label">Recruiter name</label>
+                        <input
+                            type="text"
+                            placeholder="Taylor Brooks"
+                            className="input"
+                            value={form.recruiterName}
+                            onChange={(event) => updateField("recruiterName", event.target.value)}
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label className="label">Recruiter phone</label>
+                        <input
+                            type="tel"
+                            placeholder="+1 555 123 4567"
+                            className="input"
+                            value={form.recruiterPhone}
+                            onChange={(event) => updateField("recruiterPhone", event.target.value)}
+                        />
+                    </div>
+
+                    <div className="field span-2">
+                        <label className="label">Recruiter email</label>
+                        <input
+                            type="email"
+                            placeholder="taylor@company.com"
+                            className="input"
+                            value={form.recruiterEmail}
+                            onChange={(event) => updateField("recruiterEmail", event.target.value)}
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="card form-section">
+                <h2 className="section-title">Materials and notes</h2>
+                <div className="form-grid">
+                    <div className="field span-2">
+                        <label className="label">Resume used</label>
+                        <input
+                            type="text"
+                            placeholder="frontend-resume-v3.pdf"
+                            className="input"
+                            value={form.resumeFileName}
+                            onChange={(event) => updateField("resumeFileName", event.target.value)}
+                        />
+                    </div>
+
+                    <div className="field span-2">
+                        <label className="label">Cover letter</label>
                         <textarea
                             className="input textarea"
                             rows="5"
-                            placeholder="Key points you tailored for this application"
+                            placeholder="Paste or summarize the cover letter you used for this role."
                             value={form.coverLetter}
                             onChange={(event) => updateField("coverLetter", event.target.value)}
                         />
@@ -296,7 +369,7 @@ function ApplicationFormPage() {
                         <textarea
                             className="input textarea"
                             rows="5"
-                            placeholder="Interviewer names, follow-up plans, company notes..."
+                            placeholder="Interview timeline, recruiter notes, compensation context, or anything to revisit later."
                             value={form.notes}
                             onChange={(event) => updateField("notes", event.target.value)}
                         />
