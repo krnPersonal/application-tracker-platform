@@ -138,6 +138,13 @@ function Navbar() {
                                 New
                             </NavLink>
 
+                            <NavLink
+                                to="/market"
+                                className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
+                            >
+                                Market
+                            </NavLink>
+
                             <div className="nav-account" ref={menuRef}>
                                 <button
                                     type="button"
