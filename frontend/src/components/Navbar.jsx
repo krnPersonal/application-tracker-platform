@@ -87,54 +87,65 @@ function Navbar() {
     return (
         <nav className="nav">
             <div className="nav-inner">
-                <Link to="/" className="nav-brand">
+                <Link to={token ? "/dashboard" : "/"} className="nav-brand">
                     <span className="nav-brand-mark">ApplicationTracker</span>
                     <span className="nav-brand-copy">Track every opportunity with clarity.</span>
                 </Link>
 
                 <div className="nav-links">
-                    <NavLink
-                        to="/"
-                        className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
-                    >
-                        Home
-                    </NavLink>
-
                     {!token ? (
-                        <NavLink
-                            to="/login"
-                            className={({ isActive }) => `nav-link nav-link--cta${isActive ? " nav-link--active" : ""}`}
-                        >
-                            Login
-                        </NavLink>
-                    ) : (
-                        <div className="nav-account" ref={menuRef}>
-                            <button
-                                type="button"
-                                className={`nav-account-trigger${menuOpen ? " nav-account-trigger--open" : ""}`}
-                                onClick={() => setMenuOpen((open) => !open)}
+                        <>
+                            <NavLink
+                                to="/"
+                                className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
                             >
-                                <span className="nav-avatar" aria-hidden="true">{initials}</span>
-                            </button>
+                                Home
+                            </NavLink>
 
-                            {menuOpen && (
-                                <div className="nav-menu">
-                                    <button
-                                        type="button"
-                                        className="nav-menu-item"
-                                        onClick={() => {
-                                            setMenuOpen(false);
-                                            navigate("/profile");
-                                        }}
-                                    >
-                                        Manage Account
-                                    </button>
-                                    <button type="button" className="nav-menu-item" onClick={handleLogout}>
-                                        Logout
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                            <NavLink
+                                to="/login"
+                                className={({ isActive }) => `nav-link nav-link--cta${isActive ? " nav-link--active" : ""}`}
+                            >
+                                Login
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <NavLink
+                                to="/dashboard"
+                                className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
+                            >
+                                Dashboard
+                            </NavLink>
+
+                            <div className="nav-account" ref={menuRef}>
+                                <button
+                                    type="button"
+                                    className={`nav-account-trigger${menuOpen ? " nav-account-trigger--open" : ""}`}
+                                    onClick={() => setMenuOpen((open) => !open)}
+                                >
+                                    <span className="nav-avatar" aria-hidden="true">{initials}</span>
+                                </button>
+
+                                {menuOpen && (
+                                    <div className="nav-menu">
+                                        <button
+                                            type="button"
+                                            className="nav-menu-item"
+                                            onClick={() => {
+                                                setMenuOpen(false);
+                                                navigate("/profile");
+                                            }}
+                                        >
+                                            Manage Account
+                                        </button>
+                                        <button type="button" className="nav-menu-item" onClick={handleLogout}>
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

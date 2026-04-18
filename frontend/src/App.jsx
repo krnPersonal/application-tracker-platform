@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
 import { useEffect } from "react";
 
 function getPageTitle(pathname) {
@@ -23,6 +24,10 @@ function getPageTitle(pathname) {
 
   if (pathname === "/profile") {
     return "Manage Account | ApplicationTracker";
+  }
+
+  if (pathname === "/dashboard") {
+    return "Dashboard | ApplicationTracker";
   }
 
   return "ApplicationTracker";
@@ -56,6 +61,12 @@ function App() {
                 <PublicOnlyRoute >
                 <RegisterPage />
                 </PublicOnlyRoute>
+            }
+            />
+            <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
             }
             />
             <Route path="/profile" element={
