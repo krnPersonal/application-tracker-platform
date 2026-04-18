@@ -1,6 +1,6 @@
-import {useMemo, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
-import {apiFetch, setToken} from "../Api/Client.js";
+import { useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { apiFetch, setToken } from "../api/Client.js";
 
 const COPY_BY_MODE = {
     login: {

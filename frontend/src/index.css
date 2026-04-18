@@ -115,6 +115,92 @@ input {
     font-size: 0.9rem;
 }
 
+.nav-account {
+    position: relative;
+}
+
+.nav-account-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 10px 6px 6px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.nav-account-trigger:hover,
+.nav-account-trigger--open {
+    border-color: rgba(29, 78, 216, 0.22);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+    transform: translateY(-1px);
+}
+
+.nav-avatar {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.nav-account-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.1;
+}
+
+.nav-account-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.nav-account-email {
+    color: var(--muted);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 0.73rem;
+}
+
+.nav-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 180px;
+    padding: 8px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(12px);
+}
+
+.nav-menu-item {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    padding: 10px 12px;
+    text-align: left;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.nav-menu-item:hover {
+    background: rgba(29, 78, 216, 0.08);
+    color: var(--primary);
+}
+
 .nav-link {
     padding: 6px 10px;
     border-radius: 999px;
