@@ -1,10 +1,7 @@
+import AuthPage from "./AuthPage.jsx"
+
 function LoginPage() {
-    return (
-        <div>
-            <h1>Login</h1>
-            <p>Login page coming in Module 1.</p>
-        </div>
-    );
+    return <AuthPage mode="login" />
 }
 
 export default LoginPage;
