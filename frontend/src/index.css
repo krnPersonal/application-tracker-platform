@@ -615,15 +615,211 @@ input {
     line-height: 1.7;
 }
 
+.salary-source-panel {
+    width: min(100%, 360px);
+    padding: 22px 24px;
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 34%),
+        linear-gradient(155deg, rgba(8, 17, 38, 0.98), rgba(15, 118, 110, 0.94) 60%, rgba(29, 78, 216, 0.88));
+    color: #fff;
+    box-shadow: var(--shadow);
+}
+
+.salary-source-label {
+    margin: 0 0 10px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.salary-source-value {
+    margin: 0 0 12px;
+    font-size: 2.1rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.salary-source-copy {
+    margin: 0 0 14px;
+    color: rgba(255, 255, 255, 0.78);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.salary-source-link {
+    color: #fff;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.salary-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 18px;
+}
+
+.salary-config-card,
+.salary-breakdown-card,
+.salary-guidance-card {
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.salary-config-header {
+    margin-bottom: 20px;
+}
+
+.salary-skill-groups,
+.salary-guidance-list,
+.salary-results-stack {
+    display: grid;
+    gap: 18px;
+}
+
+.salary-skill-group {
+    display: grid;
+    gap: 14px;
+    padding-top: 8px;
+}
+
+.salary-skill-group-header {
+    display: grid;
+    gap: 6px;
+}
+
+.salary-skill-group-title {
+    margin: 0;
+    font-weight: 700;
+    color: #18304d;
+}
+
+.salary-skill-group-copy {
+    margin: 0;
+    color: var(--muted);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.salary-chip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.salary-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--text);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.salary-chip strong {
+    color: var(--accent);
+    font-size: 0.82rem;
+}
+
+.salary-chip:hover {
+    transform: translateY(-1px);
+    border-color: rgba(29, 78, 216, 0.24);
+    box-shadow: var(--shadow-soft);
+}
+
+.salary-chip.is-active {
+    background: rgba(29, 78, 216, 0.08);
+    border-color: rgba(29, 78, 216, 0.24);
+}
+
+.salary-estimate-card {
+    padding: 26px;
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.14), transparent 34%),
+        linear-gradient(160deg, rgba(8, 17, 38, 0.98), rgba(29, 78, 216, 0.94) 58%, rgba(15, 118, 110, 0.88));
+    color: #fff;
+    box-shadow: var(--shadow);
+}
+
+.salary-estimate-label {
+    margin: 0 0 10px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.salary-estimate-value {
+    margin: 0 0 12px;
+    font-size: clamp(2.8rem, 5vw, 3.8rem);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    line-height: 0.98;
+}
+
+.salary-estimate-range {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.salary-breakdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.salary-breakdown-item {
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.salary-breakdown-label {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.salary-breakdown-value {
+    margin: 0;
+    color: #18304d;
+    font-weight: 700;
+}
+
+.salary-guidance-item {
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.7;
+}
+
 @media (max-width: 960px) {
     .market-signal-grid,
     .market-content-grid,
     .market-note-grid,
-    .market-role-grid {
+    .market-role-grid,
+    .salary-layout {
         grid-template-columns: 1fr;
     }
 
-    .market-status-panel {
+    .market-status-panel,
+    .salary-source-panel {
         width: 100%;
     }
 }
@@ -640,6 +836,11 @@ input {
     .market-hotspot-item {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .salary-chip-grid,
+    .salary-breakdown-grid {
+        grid-template-columns: 1fr;
     }
 }
 
