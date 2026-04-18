@@ -544,6 +544,11 @@ input {
     color: #18304d;
 }
 
+.applications-record-link:hover .applications-record-title,
+.detail-link:hover {
+    color: var(--primary);
+}
+
 .applications-record-meta {
     margin: 0;
     color: var(--muted);
@@ -556,6 +561,16 @@ input {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     margin-top: 18px;
+}
+
+.applications-record-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.applications-inline-button {
+    padding: 8px 16px;
 }
 
 .pagination {
@@ -826,6 +841,45 @@ input {
 .priority-badge.low {
     background: rgba(37, 99, 235, 0.12);
     color: #1d4ed8;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.detail-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.detail-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.detail-stack {
+    display: grid;
+    gap: 16px;
+}
+
+.detail-body {
+    margin: 0;
+    color: #18304d;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+.detail-link {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.detail-history-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .landing-page {

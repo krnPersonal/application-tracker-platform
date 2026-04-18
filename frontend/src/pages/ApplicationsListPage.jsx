@@ -479,7 +479,9 @@ function ApplicationsListPage() {
                                 <article key={application.id} className="applications-record-card">
                                     <div className="applications-record-main">
                                         <div>
-                                            <p className="applications-record-title">{application.jobTitle}</p>
+                                            <Link className="applications-record-link" to={`/applications/${application.id}`}>
+                                                <p className="applications-record-title">{application.jobTitle}</p>
+                                            </Link>
                                             <p className="applications-record-meta">
                                                 {application.companyName || "Unknown company"} • {application.jobLocation || "Location TBD"}
                                             </p>
@@ -534,6 +536,12 @@ function ApplicationsListPage() {
                                                     : `${daysSinceActivity} day${daysSinceActivity === 1 ? "" : "s"} ago`}
                                             </p>
                                         </div>
+                                    </div>
+
+                                    <div className="applications-record-actions">
+                                        <Link className="btn-outline applications-inline-button" to={`/applications/${application.id}`}>
+                                            View Details
+                                        </Link>
                                     </div>
                                 </article>
                             );
