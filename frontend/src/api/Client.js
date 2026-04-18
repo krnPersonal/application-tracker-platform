@@ -1,5 +1,13 @@
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
 
+export class ApiError extends Error {
+    constructor(message, status) {
+        super(message);
+        this.name = "ApiError";
+        this.status = status;
+    }
+}
+
 export function getToken() {
     const token = localStorage.getItem("token");
     if (!token || token === "undefined" || token === "null") {
@@ -37,7 +45,7 @@ function withAuthHeaders(options = {}, { json = true } = {}) {
 async function handleErrors(response) {
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || "Request failed");
+        throw new ApiError(error.message || "Request failed", response.status);
     }
 }
 
@@ -50,4 +58,8 @@ export async function apiFetch(path, options = {}) {
     }
 
     return response.json();
+}
+
+export function isUnauthorizedError(error) {
+    return error instanceof ApiError && error.status === 401;
 }
