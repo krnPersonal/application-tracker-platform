@@ -18,6 +18,12 @@ public class ApplicationUpdateRequest {
     private String phone;
 
     @Size(max = 150)
+    private String companyName;
+
+    @Size(max = 150)
+    private String location;
+
+    @Size(max = 150)
     private String position;
 
     @Size(max = 50)
@@ -45,8 +51,6 @@ public class ApplicationUpdateRequest {
     @Size(max = 255)
     private String linkedinUrl;
 
-    private Boolean remoteOk;
-
     public String getFullName() {
         return fullName;
     }
@@ -69,6 +73,22 @@ public class ApplicationUpdateRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getPosition() {
@@ -159,11 +179,4 @@ public class ApplicationUpdateRequest {
         this.linkedinUrl = linkedinUrl;
     }
 
-    public Boolean getRemoteOk() {
-        return remoteOk;
-    }
-
-    public void setRemoteOk(Boolean remoteOk) {
-        this.remoteOk = remoteOk;
-    }
 }

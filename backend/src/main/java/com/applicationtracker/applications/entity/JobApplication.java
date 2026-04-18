@@ -25,6 +25,12 @@ public class JobApplication extends BaseEntity {
     private String phone;
 
     @Column(nullable = false, length = 150)
+    private String companyName;
+
+    @Column(length = 150)
+    private String location;
+
+    @Column(nullable = false, length = 150)
     private String position;
 
     @Column(length = 50)
@@ -53,9 +59,6 @@ public class JobApplication extends BaseEntity {
 
     @Column(length = 255)
     private String linkedinUrl;
-
-    @Column(nullable = false)
-    private Boolean remoteOk = Boolean.FALSE;
 
     @Column(length = 255)
     private String resumeFileName;
@@ -105,6 +108,22 @@ public class JobApplication extends BaseEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getPosition() {
@@ -193,14 +212,6 @@ public class JobApplication extends BaseEntity {
 
     public void setLinkedinUrl(String linkedinUrl) {
         this.linkedinUrl = linkedinUrl;
-    }
-
-    public Boolean getRemoteOk() {
-        return remoteOk;
-    }
-
-    public void setRemoteOk(Boolean remoteOk) {
-        this.remoteOk = remoteOk;
     }
 
     public String getResumeFileName() {

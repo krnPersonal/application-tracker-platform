@@ -270,7 +270,7 @@ function DashboardPage() {
                                         <div>
                                             <p className="dashboard-followup-title">{application.position}</p>
                                             <p className="dashboard-followup-meta">
-                                                {application.fullName} • {application.status || "APPLIED"}
+                                                {application.companyName || "Unknown company"} • {application.status || "APPLIED"}
                                             </p>
                                         </div>
                                         <p className="dashboard-followup-age">
@@ -301,7 +301,7 @@ function DashboardPage() {
                                 <div>
                                     <p className="dashboard-recent-title">{application.position}</p>
                                     <p className="dashboard-recent-meta">
-                                        {application.fullName} • {formatDate(application.appliedDate || application.createdAt)}
+                                        {application.companyName || "Unknown company"} • {formatDate(application.appliedDate || application.createdAt)}
                                     </p>
                                 </div>
                                 <span className={`status-badge ${String(application.status || "APPLIED").toLowerCase()}`}>

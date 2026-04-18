@@ -8,6 +8,8 @@ public class ApplicationResponse {
     private String fullName;
     private String email;
     private String phone;
+    private String companyName;
+    private String location;
     private String position;
     private String status;
     private String coverLetter;
@@ -19,7 +21,6 @@ public class ApplicationResponse {
     private String notes;
     private String portfolioUrl;
     private String linkedinUrl;
-    private Boolean remoteOk;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String resumeFileName;
@@ -59,6 +60,22 @@ public class ApplicationResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getPosition() {
@@ -147,14 +164,6 @@ public class ApplicationResponse {
 
     public void setLinkedinUrl(String linkedinUrl) {
         this.linkedinUrl = linkedinUrl;
-    }
-
-    public Boolean getRemoteOk() {
-        return remoteOk;
-    }
-
-    public void setRemoteOk(Boolean remoteOk) {
-        this.remoteOk = remoteOk;
     }
 
     public LocalDateTime getCreatedAt() {

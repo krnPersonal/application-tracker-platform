@@ -3,7 +3,6 @@ package com.applicationtracker.applications.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
@@ -20,6 +19,13 @@ public class ApplicationCreateRequest {
 
     @Size(max = 50)
     private String phone;
+
+    @NotBlank
+    @Size(max = 150)
+    private String companyName;
+
+    @Size(max = 150)
+    private String location;
 
     @NotBlank
     @Size(max = 150)
@@ -50,9 +56,6 @@ public class ApplicationCreateRequest {
     @Size(max = 255)
     private String linkedinUrl;
 
-    @NotNull
-    private Boolean remoteOk;
-
     public String getFullName() {
         return fullName;
     }
@@ -75,6 +78,22 @@ public class ApplicationCreateRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getPosition() {
@@ -165,11 +184,4 @@ public class ApplicationCreateRequest {
         this.linkedinUrl = linkedinUrl;
     }
 
-    public Boolean getRemoteOk() {
-        return remoteOk;
-    }
-
-    public void setRemoteOk(Boolean remoteOk) {
-        this.remoteOk = remoteOk;
-    }
 }

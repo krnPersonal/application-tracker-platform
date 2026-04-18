@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { apiFetch } from "../api/Client.js";
 
 const STATUS_OPTIONS = ["ALL", "APPLIED", "INTERVIEW", "OFFER", "REJECTED"];
@@ -115,6 +116,8 @@ function ApplicationsListPage() {
                 workTypeFilter === "ALL" || workType === workTypeFilter.toLowerCase();
             const matchesQuery =
                 !normalizedQuery ||
+                String(application.companyName || "").toLowerCase().includes(normalizedQuery) ||
+                String(application.location || "").toLowerCase().includes(normalizedQuery) ||
                 String(application.fullName || "").toLowerCase().includes(normalizedQuery) ||
                 String(application.position || "").toLowerCase().includes(normalizedQuery) ||
                 String(application.email || "").toLowerCase().includes(normalizedQuery) ||
@@ -188,9 +191,11 @@ function ApplicationsListPage() {
     function exportCsv() {
         const rows = sorted.map((application) => ({
             id: application.id ?? "",
+            companyName: application.companyName ?? "",
             fullName: application.fullName ?? "",
             email: application.email ?? "",
             phone: application.phone ?? "",
+            location: application.location ?? "",
             position: application.position ?? "",
             workType: application.workType ?? "",
             status: application.status ?? "",
@@ -200,9 +205,11 @@ function ApplicationsListPage() {
 
         const headers = [
             "id",
+            "companyName",
             "fullName",
             "email",
             "phone",
+            "location",
             "position",
             "workType",
             "status",
@@ -273,6 +280,9 @@ function ApplicationsListPage() {
                     >
                         Export CSV
                     </button>
+                    <Link className="btn-primary" to="/applications/new">
+                        New Application
+                    </Link>
                 </div>
             </header>
 
@@ -312,7 +322,7 @@ function ApplicationsListPage() {
                         <input
                             type="search"
                             className="input"
-                            placeholder="Search by name, role, email, or phone"
+                            placeholder="Search by company, location, name, role, email, or phone"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
                         />
@@ -410,7 +420,7 @@ function ApplicationsListPage() {
                                         <div>
                                             <p className="applications-record-title">{application.position}</p>
                                             <p className="applications-record-meta">
-                                                {application.fullName} • {application.email}
+                                                {application.companyName || "Unknown company"} • {application.fullName}
                                             </p>
                                         </div>
                                         <span className={`status-badge ${String(application.status || "APPLIED").toLowerCase()}`}>
@@ -419,6 +429,10 @@ function ApplicationsListPage() {
                                     </div>
 
                                     <div className="applications-record-grid">
+                                        <div>
+                                            <p className="meta-label">Location</p>
+                                            <p className="meta-value">{application.location || "—"}</p>
+                                        </div>
                                         <div>
                                             <p className="meta-label">Phone</p>
                                             <p className="meta-value">{application.phone || "—"}</p>
