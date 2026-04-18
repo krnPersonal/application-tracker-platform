@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { apiFetch, clearToken, getToken, isUnauthorizedError } from "../api/Client.js";
+import { apiFetch, clearToken, getToken, isUnauthorizedError, subscribeToAuthStateChange } from "../api/Client.js";
 
 function Navbar() {
     const location = useLocation();
@@ -8,7 +8,7 @@ function Navbar() {
     const menuRef = useRef(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
-    const token = getToken();
+    const [token, setToken] = useState(() => getToken());
 
     const initials = useMemo(() => {
         if (!currentUser) {
@@ -17,6 +17,12 @@ function Navbar() {
 
         return `${currentUser.firstName?.[0] || ""}${currentUser.lastName?.[0] || ""}`.toUpperCase();
     }, [currentUser]);
+
+    useEffect(() => {
+        return subscribeToAuthStateChange(() => {
+            setToken(getToken());
+        });
+    }, []);
 
     useEffect(() => {
         if (!token) {

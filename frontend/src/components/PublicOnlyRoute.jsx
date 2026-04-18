@@ -1,8 +1,15 @@
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { getToken } from "../api/Client.js";
+import { getToken, subscribeToAuthStateChange } from "../api/Client.js";
 
 function PublicOnlyRoute({ children }) {
-    const token = getToken();
+    const [token, setToken] = useState(() => getToken());
+
+    useEffect(() => {
+        return subscribeToAuthStateChange(() => {
+            setToken(getToken());
+        });
+    }, []);
 
     if (token) {
         return <Navigate to="/" replace />;
