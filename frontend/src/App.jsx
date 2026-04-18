@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import { useEffect } from "react";
 
@@ -18,6 +20,11 @@ function getPageTitle(pathname) {
   if (pathname === "/register") {
     return "Create Account | ApplicationTracker";
   }
+
+  if (pathname === "/profile") {
+    return "Manage Account | ApplicationTracker";
+  }
+
   return "ApplicationTracker";
 }
 
@@ -49,6 +56,12 @@ function App() {
                 <PublicOnlyRoute >
                 <RegisterPage />
                 </PublicOnlyRoute>
+            }
+            />
+            <Route path="/profile" element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
             }
             />
           </Routes>

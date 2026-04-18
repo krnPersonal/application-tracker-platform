@@ -26,6 +26,12 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String role = "USER";
 
+    @Column(length = 50)
+    private String phone;
+
+    @Column(length = 100)
+    private String title;
+
     public String getEmail() {
         return email;
     }
@@ -72,5 +78,21 @@ public class User extends BaseEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
