@@ -118,6 +118,13 @@ function Navbar() {
                                 Dashboard
                             </NavLink>
 
+                            <NavLink
+                                to="/applications"
+                                className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
+                            >
+                                Applications
+                            </NavLink>
+
                             <div className="nav-account" ref={menuRef}>
                                 <button
                                     type="button"

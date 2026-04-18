@@ -204,8 +204,8 @@ function DashboardPage() {
                 </div>
 
                 <div className="form-actions">
-                    <Link className="btn-outline" to="/profile">
-                        Manage Account
+                    <Link className="btn-outline" to="/applications">
+                        View Applications
                     </Link>
                 </div>
             </header>
