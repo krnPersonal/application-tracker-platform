@@ -9,6 +9,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import ApplicationsListPage from "./pages/ApplicationsListPage";
 import ApplicationFormPage from "./pages/ApplicationFormPage";
+import ApplicationDetailPage from "./pages/ApplicationDetailPage";
 import { useEffect } from "react";
 
 function getPageTitle(pathname) {
@@ -38,6 +39,10 @@ function getPageTitle(pathname) {
 
   if (pathname === "/applications/new") {
     return "New Application | ApplicationTracker";
+  }
+
+  if (pathname.startsWith("/applications/")) {
+    return "Application Details | ApplicationTracker";
   }
 
   return "ApplicationTracker";
@@ -88,6 +93,12 @@ function App() {
             <Route path="/applications/new" element={
                 <ProtectedRoute>
                   <ApplicationFormPage />
+                </ProtectedRoute>
+            }
+            />
+            <Route path="/applications/:id" element={
+                <ProtectedRoute>
+                  <ApplicationDetailPage />
                 </ProtectedRoute>
             }
             />
