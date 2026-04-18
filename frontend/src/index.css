@@ -372,6 +372,195 @@ input {
     gap: 20px;
 }
 
+.applications-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.applications-overview-card {
+    border-radius: 24px;
+    padding: 22px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 255, 0.92));
+    box-shadow: var(--shadow-soft);
+}
+
+.applications-overview-card.warm {
+    background: linear-gradient(180deg, rgba(255, 247, 237, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.applications-overview-card.success {
+    background: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.applications-overview-card.cool {
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.applications-overview-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.applications-overview-value {
+    margin: 14px 0 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    color: #081126;
+}
+
+.applications-toolbar-top,
+.applications-list-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.applications-toolbar-copy {
+    max-width: 520px;
+}
+
+.applications-results-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.applications-results-count {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.link-button {
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 700;
+    padding: 0;
+}
+
+.applications-filter-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.applications-list-card {
+    gap: 18px;
+}
+
+.applications-page-size {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-compact {
+    min-width: 88px;
+}
+
+.applications-empty-state {
+    padding: 26px;
+    border-radius: 22px;
+    border: 1px dashed rgba(148, 163, 184, 0.24);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.applications-empty-title {
+    margin: 0 0 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #18304d;
+}
+
+.applications-record-list {
+    display: grid;
+    gap: 14px;
+}
+
+.applications-record-card {
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+    padding: 18px;
+}
+
+.applications-record-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.applications-record-title {
+    margin: 0 0 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #18304d;
+}
+
+.applications-record-meta {
+    margin: 0;
+    color: var(--muted);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 0.92rem;
+}
+
+.applications-record-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 6px;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pagination-button {
+    min-width: 110px;
+}
+
+.pagination-page {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.pagination-page.is-active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-700));
+    border-color: transparent;
+    color: #fff;
+}
+
 .dashboard-metrics-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -796,8 +985,18 @@ input {
     .summary-grid,
     .form-grid,
     .dashboard-metrics-grid,
-    .dashboard-insight-grid {
+    .dashboard-insight-grid,
+    .applications-overview-grid,
+    .applications-filter-grid,
+    .applications-record-grid {
         grid-template-columns: 1fr;
+    }
+
+    .applications-toolbar-top,
+    .applications-list-header,
+    .pagination {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .dashboard-stage-row {
@@ -839,6 +1038,11 @@ input {
 
     .dashboard-followup-item,
     .dashboard-recent-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .applications-record-main {
         flex-direction: column;
         align-items: flex-start;
     }
