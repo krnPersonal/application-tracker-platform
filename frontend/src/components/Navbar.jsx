@@ -145,6 +145,13 @@ function Navbar() {
                                 Market
                             </NavLink>
 
+                            <NavLink
+                                to="/salary"
+                                className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
+                            >
+                                Salary
+                            </NavLink>
+
                             <div className="nav-account" ref={menuRef}>
                                 <button
                                     type="button"
