@@ -51,7 +51,7 @@ function AuthPage({mode}) {
     const location = useLocation();
     const navigate = useNavigate();
     const copy = COPY_BY_MODE[mode];
-    const redirectTo = location.state?.from?.pathname || "/";
+    const redirectTo = location.state?.from?.pathname || "/dashboard";
     const [error, setError] = useState("");
     const [saving, setSaving] = useState(false);
     const [showLoginPassword, setShowLoginPassword] = useState(false);

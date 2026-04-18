@@ -372,6 +372,185 @@ input {
     gap: 20px;
 }
 
+.dashboard-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.dashboard-metric-card {
+    border-radius: 24px;
+    padding: 22px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 255, 0.92));
+    box-shadow: var(--shadow-soft);
+}
+
+.dashboard-metric-card.warm {
+    background: linear-gradient(180deg, rgba(255, 247, 237, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.dashboard-metric-card.success {
+    background: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.dashboard-metric-card.cool {
+    background: linear-gradient(180deg, rgba(239, 246, 255, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.dashboard-metric-label {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.dashboard-metric-value {
+    margin: 14px 0 8px;
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: #081126;
+}
+
+.dashboard-metric-detail {
+    margin: 0;
+    color: var(--muted);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+.dashboard-insight-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+}
+
+.dashboard-stage-list,
+.dashboard-followup-list,
+.dashboard-recent-list {
+    display: grid;
+    gap: 14px;
+}
+
+.dashboard-stage-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 52px;
+    gap: 12px;
+    align-items: center;
+}
+
+.dashboard-stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.dashboard-stage-count,
+.dashboard-stage-share {
+    font-weight: 700;
+    color: #18304d;
+}
+
+.dashboard-stage-bar {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(227, 234, 245, 0.9);
+    overflow: hidden;
+}
+
+.dashboard-stage-fill {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+}
+
+.dashboard-stage-fill.applied {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.dashboard-stage-fill.interview {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.dashboard-stage-fill.offer {
+    background: linear-gradient(135deg, #10b981, #0f766e);
+}
+
+.dashboard-stage-fill.rejected {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.dashboard-followup-item,
+.dashboard-recent-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    background: rgba(255, 255, 255, 0.82);
+}
+
+.dashboard-followup-title,
+.dashboard-recent-title {
+    margin: 0 0 6px;
+    font-weight: 700;
+    color: #18304d;
+}
+
+.dashboard-followup-meta,
+.dashboard-recent-meta {
+    margin: 0;
+    color: var(--muted);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 0.9rem;
+}
+
+.dashboard-followup-age {
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.status-badge.applied {
+    background: rgba(37, 99, 235, 0.12);
+    color: #1d4ed8;
+}
+
+.status-badge.interview {
+    background: rgba(245, 158, 11, 0.14);
+    color: #b45309;
+}
+
+.status-badge.offer {
+    background: rgba(16, 185, 129, 0.14);
+    color: #0f766e;
+}
+
+.status-badge.rejected {
+    background: rgba(239, 68, 68, 0.14);
+    color: #b91c1c;
+}
+
 .landing-page {
     gap: 24px;
 }
@@ -615,8 +794,18 @@ input {
     .landing-feature-grid,
     .landing-showcase-strip,
     .summary-grid,
-    .form-grid {
+    .form-grid,
+    .dashboard-metrics-grid,
+    .dashboard-insight-grid {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard-stage-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-stage-share {
+        display: none;
     }
 }
 
@@ -646,6 +835,12 @@ input {
 
     .span-2 {
         grid-column: span 1;
+    }
+
+    .dashboard-followup-item,
+    .dashboard-recent-item {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
