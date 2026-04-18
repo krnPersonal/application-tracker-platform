@@ -3,6 +3,8 @@ package com.applicationtracker.applications.service;
 import com.applicationtracker.applications.dto.ApplicationCreateRequest;
 import com.applicationtracker.applications.dto.ApplicationResponse;
 import com.applicationtracker.applications.dto.ApplicationUpdateRequest;
+import com.applicationtracker.applications.entity.ApplicationPriority;
+import com.applicationtracker.applications.entity.ApplicationStatus;
 import com.applicationtracker.applications.entity.JobApplication;
 import com.applicationtracker.applications.repository.JobApplicationRepository;
 import com.applicationtracker.user.entity.User;
@@ -28,22 +30,25 @@ public class ApplicationService {
         User user = getUserOrThrow(authentication);
 
         JobApplication application = new JobApplication();
-        application.setFullName(request.getFullName().trim());
-        application.setEmail(request.getEmail().trim().toLowerCase());
-        application.setPhone(trimToNull(request.getPhone()));
+        application.setJobTitle(request.getJobTitle().trim());
         application.setCompanyName(request.getCompanyName().trim());
-        application.setLocation(trimToNull(request.getLocation()));
-        application.setPosition(request.getPosition().trim());
-        application.setStatus(trimToNull(request.getStatus()) != null ? request.getStatus().trim() : "APPLIED");
+        application.setJobLocation(trimToNull(request.getJobLocation()));
+        application.setStatus(request.getStatus() != null ? request.getStatus() : ApplicationStatus.APPLIED);
+        application.setPriority(request.getPriority() != null ? request.getPriority() : ApplicationPriority.MEDIUM);
+        application.setJobUrl(trimToNull(request.getJobUrl()));
+        application.setSource(request.getSource());
         application.setCoverLetter(trimToNull(request.getCoverLetter()));
-        application.setYearsExperience(request.getYearsExperience() != null ? request.getYearsExperience() : 0);
-        application.setAvailableFrom(request.getAvailableFrom());
         application.setAppliedDate(request.getAppliedDate());
-        application.setWorkType(trimToNull(request.getWorkType()));
-        application.setSalaryExpectation(request.getSalaryExpectation());
+        application.setSalaryMin(request.getSalaryMin());
+        application.setSalaryMax(request.getSalaryMax());
+        application.setJobType(request.getJobType());
         application.setNotes(trimToNull(request.getNotes()));
-        application.setPortfolioUrl(trimToNull(request.getPortfolioUrl()));
-        application.setLinkedinUrl(trimToNull(request.getLinkedinUrl()));
+        application.setNextAction(trimToNull(request.getNextAction()));
+        application.setNextActionDate(request.getNextActionDate());
+        application.setRecruiterName(trimToNull(request.getRecruiterName()));
+        application.setRecruiterPhone(trimToNull(request.getRecruiterPhone()));
+        application.setRecruiterEmail(normalizeEmail(request.getRecruiterEmail()));
+        application.setResumeFileName(trimToNull(request.getResumeFileName()));
         application.setUser(user);
 
         return toResponse(jobApplicationRepository.save(application));
@@ -63,53 +68,62 @@ public class ApplicationService {
     public ApplicationResponse update(Long id, ApplicationUpdateRequest request, Authentication authentication) {
         JobApplication application = getOwnedApplication(id, authentication);
 
-        if (request.getFullName() != null && !request.getFullName().isBlank()) {
-            application.setFullName(request.getFullName().trim());
-        }
-        if (request.getEmail() != null && !request.getEmail().isBlank()) {
-            application.setEmail(request.getEmail().trim().toLowerCase());
-        }
-        if (request.getPhone() != null) {
-            application.setPhone(trimToNull(request.getPhone()));
+        if (request.getJobTitle() != null && !request.getJobTitle().isBlank()) {
+            application.setJobTitle(request.getJobTitle().trim());
         }
         if (request.getCompanyName() != null && !request.getCompanyName().isBlank()) {
             application.setCompanyName(request.getCompanyName().trim());
         }
-        if (request.getLocation() != null) {
-            application.setLocation(trimToNull(request.getLocation()));
+        if (request.getJobLocation() != null) {
+            application.setJobLocation(trimToNull(request.getJobLocation()));
         }
-        if (request.getPosition() != null && !request.getPosition().isBlank()) {
-            application.setPosition(request.getPosition().trim());
+        if (request.getStatus() != null) {
+            application.setStatus(request.getStatus());
         }
-        if (request.getStatus() != null && !request.getStatus().isBlank()) {
-            application.setStatus(request.getStatus().trim());
+        if (request.getPriority() != null) {
+            application.setPriority(request.getPriority());
+        }
+        if (request.getJobUrl() != null) {
+            application.setJobUrl(trimToNull(request.getJobUrl()));
+        }
+        if (request.getSource() != null) {
+            application.setSource(request.getSource());
         }
         if (request.getCoverLetter() != null) {
             application.setCoverLetter(trimToNull(request.getCoverLetter()));
         }
-        if (request.getYearsExperience() != null) {
-            application.setYearsExperience(request.getYearsExperience());
-        }
-        if (request.getAvailableFrom() != null) {
-            application.setAvailableFrom(request.getAvailableFrom());
-        }
         if (request.getAppliedDate() != null) {
             application.setAppliedDate(request.getAppliedDate());
         }
-        if (request.getWorkType() != null) {
-            application.setWorkType(trimToNull(request.getWorkType()));
+        if (request.getSalaryMin() != null) {
+            application.setSalaryMin(request.getSalaryMin());
         }
-        if (request.getSalaryExpectation() != null) {
-            application.setSalaryExpectation(request.getSalaryExpectation());
+        if (request.getSalaryMax() != null) {
+            application.setSalaryMax(request.getSalaryMax());
+        }
+        if (request.getJobType() != null) {
+            application.setJobType(request.getJobType());
         }
         if (request.getNotes() != null) {
             application.setNotes(trimToNull(request.getNotes()));
         }
-        if (request.getPortfolioUrl() != null) {
-            application.setPortfolioUrl(trimToNull(request.getPortfolioUrl()));
+        if (request.getNextAction() != null) {
+            application.setNextAction(trimToNull(request.getNextAction()));
         }
-        if (request.getLinkedinUrl() != null) {
-            application.setLinkedinUrl(trimToNull(request.getLinkedinUrl()));
+        if (request.getNextActionDate() != null) {
+            application.setNextActionDate(request.getNextActionDate());
+        }
+        if (request.getRecruiterName() != null) {
+            application.setRecruiterName(trimToNull(request.getRecruiterName()));
+        }
+        if (request.getRecruiterPhone() != null) {
+            application.setRecruiterPhone(trimToNull(request.getRecruiterPhone()));
+        }
+        if (request.getRecruiterEmail() != null) {
+            application.setRecruiterEmail(normalizeEmail(request.getRecruiterEmail()));
+        }
+        if (request.getResumeFileName() != null) {
+            application.setResumeFileName(trimToNull(request.getResumeFileName()));
         }
 
         return toResponse(jobApplicationRepository.save(application));
@@ -122,22 +136,24 @@ public class ApplicationService {
     private ApplicationResponse toResponse(JobApplication application) {
         ApplicationResponse response = new ApplicationResponse();
         response.setId(application.getId());
-        response.setFullName(application.getFullName());
-        response.setEmail(application.getEmail());
-        response.setPhone(application.getPhone());
+        response.setJobTitle(application.getJobTitle());
         response.setCompanyName(application.getCompanyName());
-        response.setLocation(application.getLocation());
-        response.setPosition(application.getPosition());
+        response.setJobLocation(application.getJobLocation());
         response.setStatus(application.getStatus());
+        response.setPriority(application.getPriority());
+        response.setJobUrl(application.getJobUrl());
+        response.setSource(application.getSource());
         response.setCoverLetter(application.getCoverLetter());
-        response.setYearsExperience(application.getYearsExperience());
-        response.setAvailableFrom(application.getAvailableFrom());
         response.setAppliedDate(application.getAppliedDate());
-        response.setWorkType(application.getWorkType());
-        response.setSalaryExpectation(application.getSalaryExpectation());
+        response.setSalaryMin(application.getSalaryMin());
+        response.setSalaryMax(application.getSalaryMax());
+        response.setJobType(application.getJobType());
         response.setNotes(application.getNotes());
-        response.setPortfolioUrl(application.getPortfolioUrl());
-        response.setLinkedinUrl(application.getLinkedinUrl());
+        response.setNextAction(application.getNextAction());
+        response.setNextActionDate(application.getNextActionDate());
+        response.setRecruiterName(application.getRecruiterName());
+        response.setRecruiterPhone(application.getRecruiterPhone());
+        response.setRecruiterEmail(application.getRecruiterEmail());
         response.setCreatedAt(application.getCreatedAt());
         response.setUpdatedAt(application.getUpdatedAt());
         response.setResumeFileName(application.getResumeFileName());
@@ -177,5 +193,10 @@ public class ApplicationService {
 
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String normalizeEmail(String value) {
+        String trimmed = trimToNull(value);
+        return trimmed == null ? null : trimmed.toLowerCase();
     }
 }

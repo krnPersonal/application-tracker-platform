@@ -4,6 +4,8 @@ import com.applicationtracker.common.entity.BaseEntity;
 import com.applicationtracker.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,49 +18,58 @@ import java.time.LocalDateTime;
 @Table(name = "job_applications")
 public class JobApplication extends BaseEntity {
     @Column(nullable = false, length = 150)
-    private String fullName;
-
-    @Column(nullable = false, length = 255)
-    private String email;
-
-    @Column(length = 50)
-    private String phone;
+    private String jobTitle;
 
     @Column(nullable = false, length = 150)
     private String companyName;
 
     @Column(length = 150)
-    private String location;
+    private String jobLocation;
 
-    @Column(nullable = false, length = 150)
-    private String position;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private ApplicationStatus status = ApplicationStatus.APPLIED;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private ApplicationPriority priority = ApplicationPriority.MEDIUM;
+
+    @Column(length = 500)
+    private String jobUrl;
+
+    @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private String status;
+    private ApplicationSource source;
 
     @Column(columnDefinition = "TEXT")
     private String coverLetter;
 
-    @Column(nullable = false)
-    private Integer yearsExperience = 0;
-
-    private LocalDate availableFrom;
-
     private LocalDate appliedDate;
 
-    @Column(length = 50)
-    private String workType;
+    private Integer salaryMin;
 
-    private Integer salaryExpectation;
+    private Integer salaryMax;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    private JobType jobType;
 
     @Column(columnDefinition = "TEXT")
     private String notes;
 
     @Column(length = 255)
-    private String portfolioUrl;
+    private String nextAction;
+
+    private LocalDate nextActionDate;
+
+    @Column(length = 150)
+    private String recruiterName;
+
+    @Column(length = 50)
+    private String recruiterPhone;
 
     @Column(length = 255)
-    private String linkedinUrl;
+    private String recruiterEmail;
 
     @Column(length = 255)
     private String resumeFileName;
@@ -86,28 +97,12 @@ public class JobApplication extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public String getFullName() {
-        return fullName;
+    public String getJobTitle() {
+        return jobTitle;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     public String getCompanyName() {
@@ -118,28 +113,44 @@ public class JobApplication extends BaseEntity {
         this.companyName = companyName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getJobLocation() {
+        return jobLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setJobLocation(String jobLocation) {
+        this.jobLocation = jobLocation;
     }
 
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getStatus() {
+    public ApplicationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApplicationStatus status) {
         this.status = status;
+    }
+
+    public String getJobUrl() {
+        return jobUrl;
+    }
+
+    public void setJobUrl(String jobUrl) {
+        this.jobUrl = jobUrl;
+    }
+
+    public ApplicationPriority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(ApplicationPriority priority) {
+        this.priority = priority;
+    }
+
+    public ApplicationSource getSource() {
+        return source;
+    }
+
+    public void setSource(ApplicationSource source) {
+        this.source = source;
     }
 
     public String getCoverLetter() {
@@ -150,22 +161,6 @@ public class JobApplication extends BaseEntity {
         this.coverLetter = coverLetter;
     }
 
-    public Integer getYearsExperience() {
-        return yearsExperience;
-    }
-
-    public void setYearsExperience(Integer yearsExperience) {
-        this.yearsExperience = yearsExperience;
-    }
-
-    public LocalDate getAvailableFrom() {
-        return availableFrom;
-    }
-
-    public void setAvailableFrom(LocalDate availableFrom) {
-        this.availableFrom = availableFrom;
-    }
-
     public LocalDate getAppliedDate() {
         return appliedDate;
     }
@@ -174,20 +169,28 @@ public class JobApplication extends BaseEntity {
         this.appliedDate = appliedDate;
     }
 
-    public String getWorkType() {
-        return workType;
+    public Integer getSalaryMin() {
+        return salaryMin;
     }
 
-    public void setWorkType(String workType) {
-        this.workType = workType;
+    public void setSalaryMin(Integer salaryMin) {
+        this.salaryMin = salaryMin;
     }
 
-    public Integer getSalaryExpectation() {
-        return salaryExpectation;
+    public Integer getSalaryMax() {
+        return salaryMax;
     }
 
-    public void setSalaryExpectation(Integer salaryExpectation) {
-        this.salaryExpectation = salaryExpectation;
+    public void setSalaryMax(Integer salaryMax) {
+        this.salaryMax = salaryMax;
+    }
+
+    public JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(JobType jobType) {
+        this.jobType = jobType;
     }
 
     public String getNotes() {
@@ -198,20 +201,44 @@ public class JobApplication extends BaseEntity {
         this.notes = notes;
     }
 
-    public String getPortfolioUrl() {
-        return portfolioUrl;
+    public String getNextAction() {
+        return nextAction;
     }
 
-    public void setPortfolioUrl(String portfolioUrl) {
-        this.portfolioUrl = portfolioUrl;
+    public void setNextAction(String nextAction) {
+        this.nextAction = nextAction;
     }
 
-    public String getLinkedinUrl() {
-        return linkedinUrl;
+    public LocalDate getNextActionDate() {
+        return nextActionDate;
     }
 
-    public void setLinkedinUrl(String linkedinUrl) {
-        this.linkedinUrl = linkedinUrl;
+    public void setNextActionDate(LocalDate nextActionDate) {
+        this.nextActionDate = nextActionDate;
+    }
+
+    public String getRecruiterName() {
+        return recruiterName;
+    }
+
+    public void setRecruiterName(String recruiterName) {
+        this.recruiterName = recruiterName;
+    }
+
+    public String getRecruiterPhone() {
+        return recruiterPhone;
+    }
+
+    public void setRecruiterPhone(String recruiterPhone) {
+        this.recruiterPhone = recruiterPhone;
+    }
+
+    public String getRecruiterEmail() {
+        return recruiterEmail;
+    }
+
+    public void setRecruiterEmail(String recruiterEmail) {
+        this.recruiterEmail = recruiterEmail;
     }
 
     public String getResumeFileName() {
