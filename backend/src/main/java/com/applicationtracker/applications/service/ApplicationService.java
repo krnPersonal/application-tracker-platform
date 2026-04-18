@@ -31,6 +31,8 @@ public class ApplicationService {
         application.setFullName(request.getFullName().trim());
         application.setEmail(request.getEmail().trim().toLowerCase());
         application.setPhone(trimToNull(request.getPhone()));
+        application.setCompanyName(request.getCompanyName().trim());
+        application.setLocation(trimToNull(request.getLocation()));
         application.setPosition(request.getPosition().trim());
         application.setStatus(trimToNull(request.getStatus()) != null ? request.getStatus().trim() : "APPLIED");
         application.setCoverLetter(trimToNull(request.getCoverLetter()));
@@ -42,7 +44,6 @@ public class ApplicationService {
         application.setNotes(trimToNull(request.getNotes()));
         application.setPortfolioUrl(trimToNull(request.getPortfolioUrl()));
         application.setLinkedinUrl(trimToNull(request.getLinkedinUrl()));
-        application.setRemoteOk(Boolean.TRUE.equals(request.getRemoteOk()));
         application.setUser(user);
 
         return toResponse(jobApplicationRepository.save(application));
@@ -70,6 +71,12 @@ public class ApplicationService {
         }
         if (request.getPhone() != null) {
             application.setPhone(trimToNull(request.getPhone()));
+        }
+        if (request.getCompanyName() != null && !request.getCompanyName().isBlank()) {
+            application.setCompanyName(request.getCompanyName().trim());
+        }
+        if (request.getLocation() != null) {
+            application.setLocation(trimToNull(request.getLocation()));
         }
         if (request.getPosition() != null && !request.getPosition().isBlank()) {
             application.setPosition(request.getPosition().trim());
@@ -104,9 +111,6 @@ public class ApplicationService {
         if (request.getLinkedinUrl() != null) {
             application.setLinkedinUrl(trimToNull(request.getLinkedinUrl()));
         }
-        if (request.getRemoteOk() != null) {
-            application.setRemoteOk(request.getRemoteOk());
-        }
 
         return toResponse(jobApplicationRepository.save(application));
     }
@@ -121,6 +125,8 @@ public class ApplicationService {
         response.setFullName(application.getFullName());
         response.setEmail(application.getEmail());
         response.setPhone(application.getPhone());
+        response.setCompanyName(application.getCompanyName());
+        response.setLocation(application.getLocation());
         response.setPosition(application.getPosition());
         response.setStatus(application.getStatus());
         response.setCoverLetter(application.getCoverLetter());
@@ -132,7 +138,6 @@ public class ApplicationService {
         response.setNotes(application.getNotes());
         response.setPortfolioUrl(application.getPortfolioUrl());
         response.setLinkedinUrl(application.getLinkedinUrl());
-        response.setRemoteOk(application.getRemoteOk());
         response.setCreatedAt(application.getCreatedAt());
         response.setUpdatedAt(application.getUpdatedAt());
         response.setResumeFileName(application.getResumeFileName());

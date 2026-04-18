@@ -347,6 +347,12 @@ input {
     gap: 16px;
 }
 
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
 .span-2 {
     grid-column: span 2;
 }
@@ -362,6 +368,35 @@ input {
     color: var(--accent);
     font-size: 0.9rem;
     font-weight: 600;
+}
+
+.textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.option-inline {
+    width: fit-content;
 }
 
 .profile-page {

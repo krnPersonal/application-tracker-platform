@@ -87,7 +87,7 @@ function Navbar() {
     return (
         <nav className="nav">
             <div className="nav-inner">
-                <Link to={token ? "/dashboard" : "/"} className="nav-brand">
+                <Link to="/" className="nav-brand">
                     <span className="nav-brand-mark">ApplicationTracker</span>
                     <span className="nav-brand-copy">Track every opportunity with clarity.</span>
                 </Link>
@@ -123,6 +123,13 @@ function Navbar() {
                                 className={({ isActive }) => `nav-link${isActive ? " nav-link--active" : ""}`}
                             >
                                 Applications
+                            </NavLink>
+
+                            <NavLink
+                                to="/applications/new"
+                                className={({ isActive }) => `nav-link nav-link--cta${isActive ? " nav-link--active" : ""}`}
+                            >
+                                New
                             </NavLink>
 
                             <div className="nav-account" ref={menuRef}>
