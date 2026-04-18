@@ -90,7 +90,7 @@ public class UsaJobsMarketService {
         String query = "JobCategoryCode=" + encode("2210")
                 + "&Keyword=" + encode("software")
                 + "&WhoMayApply=" + encode("public")
-                + "&ResultsPerPage=18"
+                + "&ResultsPerPage=60"
                 + "&SortField=" + encode("openingdate")
                 + "&SortDirection=Desc";
         return URI.create(USA_JOBS_SEARCH_ENDPOINT + "?" + query);
