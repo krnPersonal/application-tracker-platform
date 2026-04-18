@@ -1,61 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const BASELINE_SALARY = 133080;
+import { apiFetch } from "../api/Client";
 
 const LOCATION_OPTIONS = [
-  { value: "US", label: "United States average", multiplier: 1, marketLabel: "National baseline" },
-  { value: "REMOTE", label: "Remote / national market", multiplier: 1.04, marketLabel: "Remote market" },
-  { value: "AL", label: "Alabama", multiplier: 0.86, marketLabel: "Lower-cost market" },
-  { value: "AK", label: "Alaska", multiplier: 1.02, marketLabel: "Specialized market" },
-  { value: "AZ", label: "Arizona", multiplier: 0.99, marketLabel: "Growth market" },
-  { value: "AR", label: "Arkansas", multiplier: 0.82, marketLabel: "Lower-cost market" },
-  { value: "CA", label: "California", multiplier: 1.27, marketLabel: "Premium tech market" },
-  { value: "CO", label: "Colorado", multiplier: 1.08, marketLabel: "Strong tech market" },
-  { value: "CT", label: "Connecticut", multiplier: 1.08, marketLabel: "Higher-wage market" },
-  { value: "DE", label: "Delaware", multiplier: 1.01, marketLabel: "Finance-adjacent market" },
-  { value: "DC", label: "District of Columbia", multiplier: 1.2, marketLabel: "Federal tech market" },
-  { value: "FL", label: "Florida", multiplier: 0.98, marketLabel: "Growth market" },
-  { value: "GA", label: "Georgia", multiplier: 1.02, marketLabel: "Atlanta tech market" },
-  { value: "HI", label: "Hawaii", multiplier: 0.96, marketLabel: "Specialized market" },
-  { value: "ID", label: "Idaho", multiplier: 0.9, marketLabel: "Emerging market" },
-  { value: "IL", label: "Illinois", multiplier: 1.04, marketLabel: "Chicago tech market" },
-  { value: "IN", label: "Indiana", multiplier: 0.88, marketLabel: "Midwest market" },
-  { value: "IA", label: "Iowa", multiplier: 0.88, marketLabel: "Midwest market" },
-  { value: "KS", label: "Kansas", multiplier: 0.87, marketLabel: "Midwest market" },
-  { value: "KY", label: "Kentucky", multiplier: 0.85, marketLabel: "Lower-cost market" },
-  { value: "LA", label: "Louisiana", multiplier: 0.84, marketLabel: "Lower-cost market" },
-  { value: "ME", label: "Maine", multiplier: 0.9, marketLabel: "Smaller tech market" },
-  { value: "MD", label: "Maryland", multiplier: 1.13, marketLabel: "Federal tech market" },
-  { value: "MA", label: "Massachusetts", multiplier: 1.18, marketLabel: "Premium tech market" },
-  { value: "MI", label: "Michigan", multiplier: 0.96, marketLabel: "Industrial tech market" },
-  { value: "MN", label: "Minnesota", multiplier: 1.02, marketLabel: "Stable tech market" },
-  { value: "MS", label: "Mississippi", multiplier: 0.78, marketLabel: "Lower-cost market" },
-  { value: "MO", label: "Missouri", multiplier: 0.92, marketLabel: "Midwest market" },
-  { value: "MT", label: "Montana", multiplier: 0.86, marketLabel: "Smaller tech market" },
-  { value: "NE", label: "Nebraska", multiplier: 0.88, marketLabel: "Midwest market" },
-  { value: "NV", label: "Nevada", multiplier: 0.96, marketLabel: "Growth market" },
-  { value: "NH", label: "New Hampshire", multiplier: 1.02, marketLabel: "Northeast market" },
-  { value: "NJ", label: "New Jersey", multiplier: 1.15, marketLabel: "NY-adjacent market" },
-  { value: "NM", label: "New Mexico", multiplier: 0.88, marketLabel: "Specialized market" },
-  { value: "NY", label: "New York", multiplier: 1.2, marketLabel: "Premium tech market" },
-  { value: "NC", label: "North Carolina", multiplier: 1.02, marketLabel: "Research Triangle market" },
-  { value: "ND", label: "North Dakota", multiplier: 0.86, marketLabel: "Smaller tech market" },
-  { value: "OH", label: "Ohio", multiplier: 0.93, marketLabel: "Midwest market" },
-  { value: "OK", label: "Oklahoma", multiplier: 0.84, marketLabel: "Lower-cost market" },
-  { value: "OR", label: "Oregon", multiplier: 1.08, marketLabel: "West Coast market" },
-  { value: "PA", label: "Pennsylvania", multiplier: 0.99, marketLabel: "Northeast market" },
-  { value: "RI", label: "Rhode Island", multiplier: 0.98, marketLabel: "Northeast market" },
-  { value: "SC", label: "South Carolina", multiplier: 0.86, marketLabel: "Lower-cost market" },
-  { value: "SD", label: "South Dakota", multiplier: 0.82, marketLabel: "Smaller tech market" },
-  { value: "TN", label: "Tennessee", multiplier: 0.94, marketLabel: "Growth market" },
-  { value: "TX", label: "Texas", multiplier: 1.07, marketLabel: "Major tech market" },
-  { value: "UT", label: "Utah", multiplier: 1.01, marketLabel: "Growth tech market" },
-  { value: "VT", label: "Vermont", multiplier: 0.9, marketLabel: "Smaller tech market" },
-  { value: "VA", label: "Virginia", multiplier: 1.13, marketLabel: "Federal tech market" },
-  { value: "WA", label: "Washington", multiplier: 1.24, marketLabel: "Premium tech market" },
-  { value: "WV", label: "West Virginia", multiplier: 0.78, marketLabel: "Lower-cost market" },
-  { value: "WI", label: "Wisconsin", multiplier: 0.92, marketLabel: "Midwest market" },
-  { value: "WY", label: "Wyoming", multiplier: 0.84, marketLabel: "Smaller tech market" },
+  { value: "US", label: "National average" },
+  { value: "AL", label: "Alabama" },
+  { value: "AK", label: "Alaska" },
+  { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" },
+  { value: "CA", label: "California" },
+  { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" },
+  { value: "DE", label: "Delaware" },
+  { value: "DC", label: "District of Columbia" },
+  { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" },
+  { value: "HI", label: "Hawaii" },
+  { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" },
+  { value: "IN", label: "Indiana" },
+  { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" },
+  { value: "KY", label: "Kentucky" },
+  { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" },
+  { value: "MD", label: "Maryland" },
+  { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" },
+  { value: "MN", label: "Minnesota" },
+  { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" },
+  { value: "MT", label: "Montana" },
+  { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" },
+  { value: "NH", label: "New Hampshire" },
+  { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" },
+  { value: "NY", label: "New York" },
+  { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" },
+  { value: "OH", label: "Ohio" },
+  { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" },
+  { value: "PA", label: "Pennsylvania" },
+  { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" },
+  { value: "SD", label: "South Dakota" },
+  { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" },
+  { value: "UT", label: "Utah" },
+  { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" },
+  { value: "WA", label: "Washington" },
+  { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" },
+  { value: "WY", label: "Wyoming" },
 ];
 
 const EXPERIENCE_OPTIONS = [
@@ -159,6 +158,10 @@ const SKILL_GROUPS = [
 ];
 
 function formatCurrency(value) {
+  if (value == null || Number.isNaN(value)) {
+    return "Loading";
+  }
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -167,22 +170,152 @@ function formatCurrency(value) {
 }
 
 function SalaryPage() {
-  const [experienceBand, setExperienceBand] = useState("5-7");
   const [location, setLocation] = useState("US");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [experienceBand, setExperienceBand] = useState("5-7");
   const [selectedSkills, setSelectedSkills] = useState(["Java", "Spring Boot", "React", "PostgreSQL"]);
+  const [benchmark, setBenchmark] = useState(null);
+  const [isLoadingBenchmark, setIsLoadingBenchmark] = useState(true);
+  const [benchmarkError, setBenchmarkError] = useState("");
+  const [zipLocation, setZipLocation] = useState(null);
+  const [isLookingUpZip, setIsLookingUpZip] = useState(false);
+  const [zipError, setZipError] = useState("");
 
   const selectedExperience = EXPERIENCE_OPTIONS.find((option) => option.value === experienceBand) || EXPERIENCE_OPTIONS[2];
   const selectedLocation = LOCATION_OPTIONS.find((option) => option.value === location) || LOCATION_OPTIONS[0];
+  const isNationalAverage = location === "US";
+  const locationLabel = city.trim() ? `${city.trim()}, ${selectedLocation.label}` : selectedLocation.label;
+  const baselineSalary = benchmark?.annualSalary ?? null;
+  const metroAreaCode = zipLocation?.metroAreaCode || "";
+  const metroAreaName = zipLocation?.metroAreaName || "";
   const skillImpact = SKILL_GROUPS.flatMap((group) => group.items)
     .filter((item) => selectedSkills.includes(item.label))
     .reduce((total, item) => total + item.impact, 0);
 
   const adjustedSkillImpact = Math.min(skillImpact, 0.22);
-  const locationAdjustedBaseline = Math.round(BASELINE_SALARY * selectedLocation.multiplier);
-  const experienceAdjustedEstimate = Math.round(locationAdjustedBaseline * selectedExperience.multiplier);
-  const estimate = Math.round(experienceAdjustedEstimate * (1 + adjustedSkillImpact));
-  const lowerBound = Math.round(estimate * 0.9);
-  const upperBound = Math.round(estimate * 1.12);
+  const experienceAdjustedEstimate = baselineSalary == null
+    ? null
+    : Math.round(baselineSalary * selectedExperience.multiplier);
+  const estimate = experienceAdjustedEstimate == null
+    ? null
+    : Math.round(experienceAdjustedEstimate * (1 + adjustedSkillImpact));
+  const lowerBound = estimate == null ? null : Math.round(estimate * 0.9);
+  const upperBound = estimate == null ? null : Math.round(estimate * 1.12);
+  const sourceStatus = benchmark?.usingFallback
+    ? "Fallback benchmark"
+    : isLoadingBenchmark
+      ? "Loading BLS data"
+      : "Live BLS benchmark";
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoadingBenchmark(true);
+    setBenchmarkError("");
+
+    const params = new URLSearchParams({
+      location,
+      metroAreaCode,
+      metroAreaName,
+    });
+
+    apiFetch(`/api/salary/software-developer-benchmark?${params.toString()}`, {
+      signal: controller.signal,
+    })
+      .then((payload) => {
+        setBenchmark(payload);
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") return;
+        setBenchmark(null);
+        setBenchmarkError("Salary benchmark is unavailable. Showing the last known US baseline.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoadingBenchmark(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [location, metroAreaCode, metroAreaName]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    if (isNationalAverage || zipCode.length === 0) {
+      setZipLocation(null);
+      setZipError("");
+      setIsLookingUpZip(false);
+      return () => controller.abort();
+    }
+
+    if (zipCode.length < 5) {
+      setZipLocation(null);
+      setZipError("Enter 5 digits to validate ZIP and auto-fill city.");
+      setIsLookingUpZip(false);
+      return () => controller.abort();
+    }
+
+    setIsLookingUpZip(true);
+    setZipError("");
+
+    apiFetch(`/api/salary/zip-location?zipCode=${encodeURIComponent(zipCode)}&stateCode=${encodeURIComponent(location)}`, {
+      signal: controller.signal,
+    })
+      .then((payload) => {
+        if (!payload?.valid) {
+          setZipLocation(null);
+          setZipError(payload?.message || "ZIP code could not be validated.");
+          return;
+        }
+
+        setZipLocation(payload);
+        setCity(payload.city || "");
+      })
+      .catch((error) => {
+        if (error.name === "AbortError") return;
+        setZipLocation(null);
+        setZipError("ZIP lookup is unavailable right now. Select a state manually.");
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLookingUpZip(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [isNationalAverage, location, zipCode]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const normalizedCity = city.trim();
+
+    if (isNationalAverage || zipCode.length === 5 || normalizedCity.length < 3) {
+      return () => controller.abort();
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      apiFetch(`/api/salary/city-location?city=${encodeURIComponent(normalizedCity)}&stateCode=${encodeURIComponent(location)}`, {
+        signal: controller.signal,
+      })
+        .then((payload) => {
+          if (!payload?.valid) {
+            setZipLocation(null);
+            return;
+          }
+          setZipLocation(payload);
+        })
+        .catch((error) => {
+          if (error.name === "AbortError") return;
+          setZipLocation(null);
+        });
+    }, 500);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [city, isNationalAverage, location, zipCode]);
 
   function toggleSkill(label) {
     setSelectedSkills((current) =>
@@ -192,6 +325,24 @@ function SalaryPage() {
     );
   }
 
+  function handleStateChange(value) {
+    setLocation(value);
+    setCity("");
+    setZipCode("");
+    setZipLocation(null);
+    setZipError("");
+  }
+
+  function handleZipCodeChange(value) {
+    setZipCode(value.replace(/\D/g, "").slice(0, 5));
+  }
+
+  function handleCityChange(value) {
+    if (isNationalAverage) return;
+    setCity(value);
+    setZipLocation(null);
+  }
+
   return (
     <div className="page salary-page">
       <section className="page-header">
@@ -199,25 +350,34 @@ function SalaryPage() {
           <p className="page-kicker">US salary benchmark</p>
           <h1 className="page-title">Salary</h1>
           <p className="page-subtitle">
-            Estimate a current US developer salary range using location, experience, and stack signals.
-            This is a guided benchmark, not a compensation guarantee.
+            Estimate a current developer salary range using BLS wage data, city/metro context,
+            experience, and stack signals. This is a guided benchmark, not a compensation guarantee.
           </p>
         </div>
 
         <div className="salary-source-panel">
-          <p className="salary-source-label">Baseline</p>
-          <p className="salary-source-value">{formatCurrency(BASELINE_SALARY)}</p>
+          <p className="salary-source-label">{sourceStatus}</p>
+          <p className="salary-source-value">{formatCurrency(baselineSalary)}</p>
           <p className="salary-source-copy">
-            Based on the recent US software developer pay baseline from the Bureau of Labor Statistics,
-            then adjusted by location, experience, and selected skills.
+            {benchmark
+              ? `${benchmark.locationLabel} ${benchmark.geographyLevel?.toLowerCase() || "area"} ${benchmark.occupation} wage benchmark from ${benchmark.sourceName}${benchmark.year ? ` (${benchmark.year})` : ""}.${city.trim() ? ` City context: ${city.trim()}.` : ""}`
+              : "Based on the last known software developer wage benchmark, then adjusted by experience and selected skills."}
           </p>
+          {benchmark?.hourlyWage ? (
+            <p className="salary-source-copy">
+              API hourly wage: ${benchmark.hourlyWage.toFixed(2)} x 2,080 hours.
+            </p>
+          ) : null}
+          {benchmark?.message || benchmarkError ? (
+            <p className="salary-source-copy">{benchmark?.message || benchmarkError}</p>
+          ) : null}
           <a
             className="salary-source-link"
-            href="https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm"
+            href={benchmark?.sourceUrl || "https://api.bls.gov/publicAPI/v2/timeseries/data/"}
             target="_blank"
             rel="noreferrer"
           >
-            View BLS reference
+            View BLS API
           </a>
         </div>
       </section>
@@ -232,12 +392,12 @@ function SalaryPage() {
           </div>
 
           <div className="field">
-            <label className="label" htmlFor="location-market">Location / market</label>
+            <label className="label" htmlFor="salary-location">State</label>
             <select
-              id="location-market"
+              id="salary-location"
               className="input"
               value={location}
-              onChange={(event) => setLocation(event.target.value)}
+              onChange={(event) => handleStateChange(event.target.value)}
             >
               {LOCATION_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -246,7 +406,49 @@ function SalaryPage() {
               ))}
             </select>
             <p className="helper-text">
-              Location adjusts the BLS national baseline before experience and skills are applied.
+              Select a state to unlock ZIP and city-level metro salary lookup.
+            </p>
+          </div>
+
+          <div className="field">
+            <label className="label" htmlFor="salary-zip-code">ZIP code</label>
+            <input
+              id="salary-zip-code"
+              className="input"
+              inputMode="numeric"
+              maxLength={5}
+              placeholder="Example: 75201"
+              value={zipCode}
+              disabled={isNationalAverage}
+              onChange={(event) => handleZipCodeChange(event.target.value)}
+            />
+            <p className="helper-text">
+              {isNationalAverage
+                ? "Select a state to unlock ZIP validation."
+                : isLookingUpZip
+                  ? "Validating ZIP and filling city/state..."
+                  : zipLocation
+                    ? `Detected ${zipLocation.city}, ${zipLocation.state}.${zipLocation.metroAreaName ? ` Metro benchmark: ${zipLocation.metroAreaName}.` : " State benchmark will be used."}`
+                    : zipError || "Optional: enter ZIP to auto-fill city. ZIP must belong to the selected state."}
+            </p>
+          </div>
+
+          <div className="field">
+            <label className="label" htmlFor="salary-city">City</label>
+            <input
+              id="salary-city"
+              className="input"
+              placeholder="Optional city"
+              value={city}
+              disabled={isNationalAverage}
+              onChange={(event) => handleCityChange(event.target.value)}
+            />
+            <p className="helper-text">
+              {isNationalAverage
+                ? "Select a state to unlock city context."
+                : zipLocation?.metroAreaName
+                  ? `City resolved to ${zipLocation.metroAreaName}; salary will use metro data when BLS has it.`
+                  : "City can resolve to metro salary data when available; otherwise state data is used."}
             </p>
           </div>
 
@@ -297,7 +499,7 @@ function SalaryPage() {
 
         <aside className="salary-results-stack">
           <article className="salary-estimate-card">
-            <p className="salary-estimate-label">Estimated US salary</p>
+            <p className="salary-estimate-label">Estimated salary in {locationLabel}</p>
             <p className="salary-estimate-value">{formatCurrency(estimate)}</p>
             <p className="salary-estimate-range">
               Typical range: {formatCurrency(lowerBound)} to {formatCurrency(upperBound)}
@@ -307,15 +509,12 @@ function SalaryPage() {
           <article className="card salary-breakdown-card">
             <div className="salary-breakdown-grid">
               <div className="salary-breakdown-item">
-                <p className="salary-breakdown-label">Location market</p>
-                <p className="salary-breakdown-value">{selectedLocation.marketLabel}</p>
+                <p className="salary-breakdown-label">Location baseline</p>
+                <p className="salary-breakdown-value">{benchmark?.locationLabel || selectedLocation.label}</p>
               </div>
               <div className="salary-breakdown-item">
-                <p className="salary-breakdown-label">Location adjustment</p>
-                <p className="salary-breakdown-value">
-                  {selectedLocation.multiplier >= 1 ? "+" : "-"}
-                  {Math.abs(Math.round((selectedLocation.multiplier - 1) * 100))}%
-                </p>
+                <p className="salary-breakdown-label">Geography level</p>
+                <p className="salary-breakdown-value">{benchmark?.geographyLevel || "National"}</p>
               </div>
               <div className="salary-breakdown-item">
                 <p className="salary-breakdown-label">Experience band</p>
@@ -331,7 +530,9 @@ function SalaryPage() {
               </div>
               <div className="salary-breakdown-item">
                 <p className="salary-breakdown-label">Benchmark model</p>
-                <p className="salary-breakdown-value">US developer baseline</p>
+                <p className="salary-breakdown-value">
+                  {benchmark?.usingFallback ? "Fallback + profile" : `${benchmark?.geographyLevel || "BLS"} API + profile`}
+                </p>
               </div>
             </div>
           </article>
@@ -341,16 +542,16 @@ function SalaryPage() {
             <h2 className="section-title">How this estimate changes</h2>
             <div className="salary-guidance-list">
               <div className="salary-guidance-item">
-                Start with the BLS software developer median: {formatCurrency(BASELINE_SALARY)}.
-              </div>
-              <div className="salary-guidance-item">
-                Apply location: {selectedLocation.label} moves the baseline to {formatCurrency(locationAdjustedBaseline)}.
+                Start with the BLS benchmark for {benchmark?.locationLabel || selectedLocation.label}: {formatCurrency(baselineSalary)}.
               </div>
               <div className="salary-guidance-item">
                 Apply experience: {selectedExperience.label} moves it to {formatCurrency(experienceAdjustedEstimate)}.
               </div>
               <div className="salary-guidance-item">
                 Apply selected skills/tools: +{Math.round(adjustedSkillImpact * 100)}%, capped at 22% to avoid unrealistic stacking.
+              </div>
+              <div className="salary-guidance-item">
+                Skill percentages are transparent estimates; public free APIs do not provide reliable per-skill salary uplift.
               </div>
             </div>
           </article>
@@ -363,7 +564,7 @@ function SalaryPage() {
                 Compare the estimate to the salary fields in your tracked applications.
               </div>
               <div className="salary-guidance-item">
-                Adjust the selected stack to reflect the role you are targeting, not just your resume.
+                Use ZIP or city to resolve metro wage data when BLS and Census have a match.
               </div>
               <div className="salary-guidance-item">
                 Use the range to decide whether a posting is below-market, on-market, or stretch compensation.
