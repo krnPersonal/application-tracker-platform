@@ -10,6 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ApplicationsListPage from "./pages/ApplicationsListPage";
 import ApplicationFormPage from "./pages/ApplicationFormPage";
 import ApplicationDetailPage from "./pages/ApplicationDetailPage";
+import MarketPage from "./pages/MarketPage";
 import { useEffect } from "react";
 
 function getPageTitle(pathname) {
@@ -39,6 +40,10 @@ function getPageTitle(pathname) {
 
   if (pathname === "/applications/new") {
     return "New Application | ApplicationTracker";
+  }
+
+  if (pathname === "/market") {
+    return "Market | ApplicationTracker";
   }
 
   if (pathname.startsWith("/applications/")) {
@@ -105,6 +110,12 @@ function App() {
             <Route path="/profile" element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+            }
+            />
+            <Route path="/market" element={
+                <ProtectedRoute>
+                  <MarketPage />
                 </ProtectedRoute>
             }
             />
